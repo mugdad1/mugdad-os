@@ -11,8 +11,8 @@
 
   # Only needed on machines where the panel hangs off the iGPU and an external
   # port hangs off the dGPU (the Victus): the compositor has to be told both
-  # DRM nodes up front, because neither sway nor Hyprland can add a device
-  # after startup. Everywhere else the compositor picks its own nodes.
+  # DRM nodes up front, because it picks its nodes at startup and cannot add
+  # one later. Everywhere else it picks its own nodes.
   gpuDevices = lib.optionalString cfg.intelPrimaryDrm ''
     # Cards are found by PCI vendor id, because card numbering depends on load
     # order.
@@ -42,11 +42,8 @@
     nvidia_card="$(drm_card_for 0x10de || true)"
     if [ -n "$intel_card" ]; then
       if [ -n "$nvidia_card" ] && card_has_display "''${nvidia_card##*/}"; then
-        export WLR_DRM_DEVICES="$intel_card:$nvidia_card"
         export AQ_DRM_DEVICES="$intel_card:$nvidia_card"
-        export SWAY_UNSUPPORTED_GPU=true
       else
-        export WLR_DRM_DEVICES="$intel_card"
         export AQ_DRM_DEVICES="$intel_card"
         # Nothing is plugged into the dGPU, so keep glvnd away from it: a
         # single open /dev/nvidia* handle pins the GPU in D0 and defeats
@@ -61,18 +58,18 @@
     fi
   '';
 
-  # Shared greetd session wrapper: exports the Wayland session vars and the GPU
-  # selection, then execs the compositor. WLR_DRM_DEVICES is read by sway,
-  # AQ_DRM_DEVICES by Hyprland; each ignores the other.
+  # Shared greetd Wayland-session wrapper: exports the session vars and the
+  # GPU selection, then execs the compositor. AQ_DRM_DEVICES is read by
+  # Hyprland; Cinnamon ignores it and scans the cards itself.
   sessionWrapper = pkgs.writeShellScript "wayland-session" ''
     case "''${1##*/}" in
       start-hyprland | hyprland)
         export XDG_SESSION_DESKTOP=Hyprland
         export XDG_CURRENT_DESKTOP=Hyprland
         ;;
-      *)
-        export XDG_SESSION_DESKTOP=sway
-        export XDG_CURRENT_DESKTOP=sway
+      cinnamon-session-cinnamon)
+        export XDG_SESSION_DESKTOP=cinnamon
+        export XDG_CURRENT_DESKTOP=X-Cinnamon
         ;;
     esac
 
@@ -85,6 +82,17 @@
     ${gpuDevices}
 
     exec "$@"
+  '';
+
+  # X11 sessions get their own wrapper: greetd starts no X server, so startx
+  # brings one up on the greeter's VT. The Wayland-only hints must not leak
+  # into an X11 session, hence the unset.
+  xsessionWrapper = pkgs.writeShellScript "x11-session" ''
+    unset GDK_BACKEND QT_QPA_PLATFORM NIXOS_OZONE_WL ELECTRON_OZONE_PLATFORM_HINT
+    export XDG_SESSION_TYPE=x11
+    export XDG_SESSION_DESKTOP=cinnamon
+    export XDG_CURRENT_DESKTOP=X-Cinnamon
+    exec ${pkgs.xinit}/bin/startx "$@"
   '';
 in {
   options.services.desktop.intelPrimaryDrm = lib.mkEnableOption ''
@@ -117,12 +125,21 @@ in {
         enable = true;
         settings = {
           default_session = {
-            # Sessions come from /etc/wayland-sessions so hyprland's own
-            # hyprland-uwsm.desktop never appears as a third, broken choice.
-            command = "${pkgs.tuigreet}/bin/tuigreet --time --asterisks --remember --remember-session --sessions /etc/wayland-sessions --session-wrapper ${sessionWrapper} --theme '${greeterTheme}'";
+            # Sessions come from /etc/wayland-sessions and /etc/xsessions so
+            # hyprland's own hyprland-uwsm.desktop never appears as a broken
+            # extra choice.
+            command = "${pkgs.tuigreet}/bin/tuigreet --time --asterisks --remember --remember-session --sessions /etc/wayland-sessions --xsessions /etc/xsessions --session-wrapper ${sessionWrapper} --xsession-wrapper ${xsessionWrapper} --theme '${greeterTheme}'";
             user = "greeter";
           };
         };
+      };
+
+      # X11 for the Cinnamon session. greetd stays the display manager — its
+      # module is in the list that keeps xserver from auto-enabling LightDM —
+      # and startx is the X server the X11 session wrapper runs.
+      xserver = {
+        enable = true;
+        displayManager.startx.enable = true;
       };
 
       irqbalance.enable = false;
@@ -136,16 +153,28 @@ in {
       };
     };
 
-    # The two compositor sessions offered at greetd.
+    # The sessions offered at greetd: Cinnamon on X11, Cinnamon on Wayland,
+    # and Hyprland. Exec paths are absolute because the greeter's PATH is not
+    # guaranteed.
     environment.etc = {
-      "wayland-sessions/sway.desktop".text = ''
+      "wayland-sessions/cinnamon.desktop".text = ''
         [Desktop Entry]
-        Name=Sway
-        Comment=i3-compatible Wayland compositor
-        Exec=${pkgs.sway}/bin/sway
+        Name=Cinnamon on Wayland (Experimental)
+        Comment=Cinnamon desktop environment on Wayland
+        Exec=${pkgs.cinnamon}/bin/cinnamon-session-cinnamon --wayland
         Type=Application
-        DesktopNames=sway
-        Keywords=tiling;wayland;compositor;
+        DesktopNames=X-Cinnamon
+        Keywords=desktop;cinnamon;wayland;
+      '';
+
+      "xsessions/cinnamon.desktop".text = ''
+        [Desktop Entry]
+        Name=Cinnamon
+        Comment=Cinnamon desktop environment on X11
+        Exec=${pkgs.cinnamon}/bin/cinnamon-session-cinnamon
+        Type=Application
+        DesktopNames=X-Cinnamon
+        Keywords=desktop;cinnamon;x11;
       '';
 
       "wayland-sessions/hyprland.desktop".text = ''
@@ -166,7 +195,7 @@ in {
     # picked session survives reboots; `r` drops a stale free-form command.
     systemd.tmpfiles.rules = [
       "d /var/cache/tuigreet 0755 greeter greeter -"
-      "f /var/cache/tuigreet/lastsession-path 0644 greeter greeter - /etc/wayland-sessions/sway.desktop"
+      "f /var/cache/tuigreet/lastsession-path 0644 greeter greeter - /etc/xsessions/cinnamon.desktop"
       "r /var/cache/tuigreet/lastsession"
     ];
 

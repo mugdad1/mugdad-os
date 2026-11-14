@@ -12,8 +12,8 @@ All three deploy from `main`.
 
 | Host | Role | Platform |
 | --- | --- | --- |
-| `victus` | Daily laptop — Sway + Hyprland, home-manager, Intel iGPU + RTX 3050 | HP Victus 15, i5-12500H |
-| `t480s` | Second laptop — Sway + Hyprland, home-manager, Intel iGPU only | ThinkPad T480s |
+| `victus` | Daily laptop — Cinnamon + Hyprland, home-manager, Intel iGPU + RTX 3050 | HP Victus 15, i5-12500H |
+| `t480s` | Second laptop — Cinnamon + Hyprland, home-manager, Intel iGPU only | ThinkPad T480s |
 | `grandpa` | Headless server — Forgejo, gitea-mirror, nginx, HA, SearXNG, study, blocky, Docker engine, backups | Custom i3-2120 |
 
 `grandpa` imports `modules/core` only: no desktop, no home-manager. Its
@@ -39,7 +39,7 @@ modules/
   home/                   # home-manager stack — only where variables declare a desktop
     terminal/             # cli, dev, fish, foot, glow, lazyvim, shell
     apps/                 # browser, git, gui, homepage, vscodium, xdg
-    desktop/              # theme, osd, swaylock + sway/, hyprland/, waybar/, rofi/, swaync/
+    desktop/              # theme, osd, swaylock + variables.nix, hyprland/, waybar/, rofi/, swaync/
 pkgs/                     # callPackage files: filen-cli.nix, filen-desktop.nix, gitea-mirror.nix
 scripts/                  # wrapped shell scripts (scripts/default.nix)
   grandpa/ac.sh           # read directly by hosts/grandpa/packages.nix

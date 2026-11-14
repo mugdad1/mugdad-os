@@ -5,13 +5,14 @@
 }: {
   home.sessionVariables = {
     # XDG_CURRENT_DESKTOP / XDG_SESSION_TYPE / XDG_SESSION_DESKTOP are NOT set
-    # here: home-manager session vars are shared by Sway and Hyprland, so a
-    # hard-coded "sway" would leak into the Hyprland session. The greetd
-    # session wrapper (modules/desktop/services.nix) exports the right values
-    # for whichever desktop was picked at login.
+    # here: these variables are shared by every session, so a hard-coded
+    # desktop name would leak into the wrong one. The greetd session wrappers
+    # (modules/desktop/services.nix) export the right values for whichever
+    # session was picked at login.
 
-    # sway reads XKB_* env as fallback when the config has no match;
-    # the config sets the layout explicitly (modules/home/sway/sway.nix).
+    # XKB_* is a fallback for anything that reads the environment; Hyprland
+    # sets the layout explicitly (modules/home/desktop/hyprland/settings.nix)
+    # and Cinnamon keeps its own keyboard settings.
     XKB_DEFAULT_LAYOUT = variables.keyboardLayout;
     XKB_DEFAULT_OPTIONS = variables.keyboardOptions;
 

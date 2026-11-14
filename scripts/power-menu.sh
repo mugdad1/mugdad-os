@@ -19,8 +19,8 @@ no="<span color='${red}'>✘</span>"
 
 theme="$HOME/.config/rofi/powermenu-theme.rasi"
 
-# Both desktops share this script. XDG_CURRENT_DESKTOP is exported by the
-# greetd session wrapper (modules/desktop/services.nix): "sway" or "Hyprland".
+# Shared by the Hyprland and Cinnamon sessions. XDG_CURRENT_DESKTOP is
+# exported by the greetd session wrappers (modules/desktop/services.nix).
 is_hyprland() {
     [[ ${XDG_CURRENT_DESKTOP:-} == *Hyprland* ]]
 }
@@ -29,7 +29,7 @@ do_lock() {
     if is_hyprland; then
         hyprlock
     else
-        swaylock
+        cinnamon-screensaver-command --lock
     fi
 }
 
@@ -65,7 +65,7 @@ run_cmd() {
             if is_hyprland; then
                 hyprctl dispatch 'hl.dsp.exit()'
             else
-                swaymsg exit
+                cinnamon-session-quit --logout
             fi
         fi
     else

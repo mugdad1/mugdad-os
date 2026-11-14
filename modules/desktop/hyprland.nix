@@ -1,5 +1,5 @@
 {lib, ...}: {
-  # Hyprland is a second session next to Sway, started through the greetd
+  # Hyprland is a second session next to Cinnamon, started through the greetd
   # wrapper rather than uwsm.
   programs.hyprland = {
     enable = true;

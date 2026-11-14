@@ -24,11 +24,11 @@
       ];
     };
 
-    # hypridle is installed for both sessions' home profile, but its commands
+    # hypridle is installed for every session's home profile, but its commands
     # are Hyprland-only (hyprlock + `hyprctl`). The HM module only conditions
     # the unit on WAYLAND_DISPLAY, so gate it on the desktop the session
-    # wrapper exported (modules/desktop/services.nix) — otherwise the Sway
-    # session would start it and fail to lock / toggle DPMS.
+    # wrapper exported (modules/desktop/services.nix) — otherwise the Cinnamon
+    # Wayland session would start it and fail to lock / toggle DPMS.
   };
 
   systemd.user.services.hypridle.Unit.ConditionEnvironment = lib.mkForce [

@@ -1,4 +1,4 @@
-_: let
+{lib, ...}: let
   c = (import ../../../../lib/gruvbox.nix).css;
 in {
   services.swaync = {
@@ -74,4 +74,12 @@ in {
       ''
       + builtins.readFile ./style.css;
   };
+
+  # swaync is the Hyprland notification daemon; Cinnamon ships its own
+  # notification server, so start it only where it is used — the same gate
+  # pattern as hypridle.nix.
+  systemd.user.services.swaync.Unit.ConditionEnvironment = lib.mkForce [
+    "WAYLAND_DISPLAY"
+    "XDG_CURRENT_DESKTOP=Hyprland"
+  ];
 }

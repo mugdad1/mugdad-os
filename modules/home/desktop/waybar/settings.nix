@@ -1,10 +1,12 @@
 {variables, ...}: let
   configFor = import ./config.nix variables;
+  mainBar = configFor "hyprland/workspaces";
 in {
-  # Sway keeps the default ~/.config/waybar/config.
-  programs.waybar.settings.mainBar = configFor "sway/workspaces";
+  # One config everywhere: the default ~/.config/waybar/config uses
+  # hyprland/workspaces, and toggle-waybar starts plain `waybar`.
+  programs.waybar.settings.mainBar = mainBar;
 
-  # Hyprland gets its own file because it needs hyprland/workspaces; the
-  # session script starts waybar with `-c ~/.config/waybar/config-hypr`.
-  xdg.configFile."waybar/config-hypr".text = builtins.toJSON (configFor "hyprland/workspaces");
+  # The Hyprland session script starts waybar with
+  # `-c ~/.config/waybar/config-hypr`, so keep that file too.
+  xdg.configFile."waybar/config-hypr".text = builtins.toJSON mainBar;
 }

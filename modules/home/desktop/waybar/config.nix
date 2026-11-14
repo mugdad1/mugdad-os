@@ -1,5 +1,5 @@
-# Shared waybar bar definition. `wsModule` is the workspace module that
-# belongs to the compositor: "sway/workspaces" or "hyprland/workspaces".
+# Shared waybar bar definition. `wsModule` is the workspace module of the
+# compositor being configured (only hyprland/workspaces now).
 variables: wsModule: let
   custom = import ./theme.nix;
   btop = "${variables.terminal} -e btop";

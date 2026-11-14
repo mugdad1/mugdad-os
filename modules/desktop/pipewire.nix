@@ -26,7 +26,7 @@
             "default.clock.min-quantum" = 32;
             "default.clock.max-quantum" = 8192;
 
-            # This module segfaults when sway's on-demand Xwayland exits; it is
+            # This module segfaults when an on-demand Xwayland exits; it is
             # pointless on a Wayland-only session anyway.
             "module.x11.bell" = false;
           };

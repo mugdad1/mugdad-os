@@ -62,6 +62,12 @@
   # GPU selection, then execs the compositor. AQ_DRM_DEVICES is read by
   # Hyprland; Cinnamon ignores it and scans the cards itself.
   sessionWrapper = pkgs.writeShellScript "wayland-session" ''
+    # greetd sets up no session environment: /etc/profile is what exports
+    # XDG_DATA_DIRS (cinnamon-session looks up its session and required
+    # component files there) and PATH (cinnamon-session-cinnamon execs
+    # `cinnamon-session` by name).
+    . /etc/profile
+
     case "''${1##*/}" in
       start-hyprland | hyprland)
         export XDG_SESSION_DESKTOP=Hyprland
@@ -88,6 +94,11 @@
   # brings one up on the greeter's VT. The Wayland-only hints must not leak
   # into an X11 session, hence the unset.
   xsessionWrapper = pkgs.writeShellScript "x11-session" ''
+    # Same as the Wayland wrapper: pull in XDG_DATA_DIRS/PATH first, then
+    # drop the Wayland hints that /etc/profile (via home-manager's session
+    # vars) just pulled in — they must not leak into an X11 session.
+    . /etc/profile
+
     unset GDK_BACKEND QT_QPA_PLATFORM NIXOS_OZONE_WL ELECTRON_OZONE_PLATFORM_HINT
     export XDG_SESSION_TYPE=x11
     export XDG_SESSION_DESKTOP=cinnamon
@@ -134,12 +145,18 @@ in {
         };
       };
 
-      # X11 for the Cinnamon session. greetd stays the display manager — its
-      # module is in the list that keeps xserver from auto-enabling LightDM —
-      # and startx is the X server the X11 session wrapper runs.
+      # Cinnamon is a desktopManager, not just a session script: the module
+      # installs the DE (cinnamon-screensaver, settings daemons, nemo,
+      # xdg-desktop-portal-xapp) and registers cinnamon's own session files.
+      # Without it cinnamon-session dies on
+      # "Unable to find required component 'org.cinnamon.ScreenSaver'".
+      # greetd stays the display manager — its module is in the list that
+      # keeps xserver from auto-enabling LightDM — and startx is the X server
+      # the X11 session wrapper runs.
       xserver = {
         enable = true;
         displayManager.startx.enable = true;
+        desktopManager.cinnamon.enable = true;
       };
 
       irqbalance.enable = false;

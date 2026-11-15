@@ -145,6 +145,12 @@ in {
         };
       };
 
+      # The Cinnamon module opts into the full Linux Mint application suite
+      # (xed, pix, xviewer, xreader, celluloid, bulky, warpinator, gucharmap,
+      # gnome-terminal, …). Every app the user actually wants is installed by
+      # home-manager, so the Mint set is only menu clutter — turn it off.
+      cinnamon.apps.enable = false;
+
       # Cinnamon is a desktopManager, not just a session script: the module
       # installs the DE (cinnamon-screensaver, settings daemons, nemo,
       # xdg-desktop-portal-xapp) and registers cinnamon's own session files.
@@ -157,6 +163,10 @@ in {
         enable = true;
         displayManager.startx.enable = true;
         desktopManager.cinnamon.enable = true;
+
+        # xterm is added unconditionally by the X server module; nothing here
+        # launches it (foot is the terminal), so keep it out of the menu.
+        excludePackages = [pkgs.xterm];
       };
 
       irqbalance.enable = false;
@@ -204,6 +214,11 @@ in {
         Keywords=tiling;wayland;compositor;
       '';
     };
+
+    # Onboard (on-screen keyboard) is the only accessibility package the
+    # Cinnamon module pulls that we do not want; everything else in that list
+    # is a theme or a session requirement.
+    environment.cinnamon.excludePackages = [pkgs.onboard];
 
     # gvfs needs wsdd to browse the Windows Network neighbourhood.
     environment.systemPackages = [pkgs.wsdd];

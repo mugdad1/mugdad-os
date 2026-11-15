@@ -218,11 +218,12 @@ in {
       '';
     };
 
-    # Onboard (on-screen keyboard) and blueman (Bluetooth Manager/Adapters)
-    # are the two extras the Cinnamon module pulls that we do not want;
-    # everything else in that list is a theme or a session requirement.
-    # Excluding blueman only drops the applet — hardware.bluetooth stays on.
-    environment.cinnamon.excludePackages = [pkgs.onboard pkgs.blueman];
+    # Onboard (on-screen keyboard), blueman (Bluetooth Manager/Adapters) and
+    # orca (screen reader) are the extras the Cinnamon module pulls that we do
+    # not want; everything else in that list is a theme or a session
+    # requirement. Excluding blueman only drops the applet — hardware.bluetooth
+    # stays on.
+    environment.cinnamon.excludePackages = [pkgs.onboard pkgs.blueman pkgs.orca];
 
     # gnome-online-accounts-gtk (the "Online Accounts" panel) is hard-coded
     # into the Cinnamon module's environment.systemPackages with no exclude

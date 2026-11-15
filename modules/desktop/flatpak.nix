@@ -39,7 +39,12 @@ in {
   # when flathub has not published the ref for a brand-new driver yet.
   systemd.services.flatpak-nvidia-gl = lib.mkIf config.hardware.nvidia.prime.offload.enable {
     description = "Install the flatpak NVIDIA GL runtime matching the host driver";
-    wantedBy = ["multi-user.target"];
+    # Same target as flatpak-managed-install, which itself runs before
+    # graphical.target: install -> runtime -> graphical. WantedBy =
+    # multi-user.target would close an ordering cycle, because that service is
+    # ordered after multi-user.target.
+    wantedBy = ["graphical.target"];
+    before = ["graphical.target"];
     wants = ["network-online.target"];
     after = ["network-online.target" "flatpak-managed-install.service"];
     serviceConfig = {

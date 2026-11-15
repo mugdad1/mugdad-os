@@ -117,6 +117,9 @@ in {
 
       gnome = {
         gnome-keyring.enable = true;
+        # The Cinnamon module enables the GOA daemon by default; nothing here
+        # uses online accounts, so turn it off with its panel app above.
+        gnome-online-accounts.enable = false;
       };
 
       fstrim = {
@@ -215,10 +218,21 @@ in {
       '';
     };
 
-    # Onboard (on-screen keyboard) is the only accessibility package the
-    # Cinnamon module pulls that we do not want; everything else in that list
-    # is a theme or a session requirement.
-    environment.cinnamon.excludePackages = [pkgs.onboard];
+    # Onboard (on-screen keyboard) and blueman (Bluetooth Manager/Adapters)
+    # are the two extras the Cinnamon module pulls that we do not want;
+    # everything else in that list is a theme or a session requirement.
+    # Excluding blueman only drops the applet — hardware.bluetooth stays on.
+    environment.cinnamon.excludePackages = [pkgs.onboard pkgs.blueman];
+
+    # gnome-online-accounts-gtk (the "Online Accounts" panel) is hard-coded
+    # into the Cinnamon module's environment.systemPackages with no exclude
+    # hook, so the package itself is replaced with an empty directory. It is
+    # referenced nowhere else in nixpkgs, so nothing else loses it.
+    nixpkgs.overlays = [
+      (final: prev: {
+        gnome-online-accounts-gtk = prev.emptyDirectory;
+      })
+    ];
 
     # gvfs needs wsdd to browse the Windows Network neighbourhood.
     environment.systemPackages = [pkgs.wsdd];

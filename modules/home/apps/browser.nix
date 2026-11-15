@@ -51,6 +51,11 @@ in {
           install_url = "https://addons.mozilla.org/firefox/downloads/latest/downthemall/latest.xpi";
           installation_mode = "normal_installed";
         };
+        # Unhook — strips YouTube's recommended videos, comments and related feeds.
+        "myallychou@gmail.com" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/youtube-recommended-videos/latest.xpi";
+          installation_mode = "normal_installed";
+        };
       };
     };
 

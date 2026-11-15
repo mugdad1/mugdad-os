@@ -14,7 +14,7 @@
     pavucontrol
     vlc
     freetube
-
+    cool-retro-term
     ## Browsers (un-nixified profiles)
     ungoogled-chromium
     tor-browser

@@ -19,11 +19,38 @@
     export PATH="${pkgs.dbus}/bin:$PATH"
     exec ${pkgs.dbus}/bin/dbus-run-session ${managedInstallScript}
   '';
+
+  # Flatpak only mounts the GL runtime whose version matches the host driver
+  # (org.freedesktop.Platform.GL.nvidia-<driver with dots as dashes>). Derive
+  # the ref from the branch we actually run instead of pinning it by hand, so a
+  # driver bump picks up the matching runtime on the next switch. Without it the
+  # sandbox has no NVIDIA libs and every flatpak renders on the iGPU.
+  nvidiaGlRuntime = "org.freedesktop.Platform.GL.nvidia-${
+    lib.replaceStrings ["."] ["-"] config.hardware.nvidia.package.version
+  }";
 in {
   imports = [inputs.nix-flatpak.nixosModules.nix-flatpak];
 
   systemd.services.flatpak-managed-install.serviceConfig.ExecStart =
     lib.mkForce "${managedInstallWithBus}";
+
+  # Runtime refs are not covered by services.flatpak.packages (that only takes
+  # applications), so the NVIDIA GL runtime is installed here. It fails loudly
+  # when flathub has not published the ref for a brand-new driver yet.
+  systemd.services.flatpak-nvidia-gl = lib.mkIf config.hardware.nvidia.prime.offload.enable {
+    description = "Install the flatpak NVIDIA GL runtime matching the host driver";
+    wantedBy = ["multi-user.target"];
+    wants = ["network-online.target"];
+    after = ["network-online.target" "flatpak-managed-install.service"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      exec ${pkgs.flatpak}/bin/flatpak install --system --noninteractive flathub \
+        ${nvidiaGlRuntime}
+    '';
+  };
 
   services.flatpak = {
     enable = true;

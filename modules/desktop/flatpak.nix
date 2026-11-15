@@ -47,9 +47,18 @@ in {
     before = ["graphical.target"];
     wants = ["network-online.target"];
     after = ["network-online.target" "flatpak-managed-install.service"];
+    # network-online.target can be reached before wifi has associated and before
+    # blocky has an upstream, so the first attempt may die on DNS. Retry for a
+    # while instead of leaving the unit failed until the next rebuild.
+    unitConfig = {
+      StartLimitBurst = 10;
+      StartLimitIntervalSec = "15min";
+    };
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = "30s";
     };
     script = ''
       exec ${pkgs.flatpak}/bin/flatpak install --system --noninteractive flathub \

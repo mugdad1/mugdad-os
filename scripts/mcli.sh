@@ -53,7 +53,7 @@ cmd_update() {
     # nixos-hardware and rust-overlay are gone from the flake entirely.
     nix flake update \
         nixpkgs home-manager nix-flatpak nix-index-database \
-        zen-browser sops-nix
+        zen-browser
     popd > /dev/null
     info "Rebuilding with updated inputs..."
     cmd_rebuild

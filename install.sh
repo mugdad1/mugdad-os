@@ -84,26 +84,6 @@ if [ "$GPU" != "none" ]; then
     ln -sf "$PWD/assets/wallpapers/wallpaper.png" ~/Pictures/wallpapers/wallpaper 2> /dev/null || true
 fi
 
-# sops is grandpa-only, and the private key is the one thing a declarative
-# system cannot restore. Refuse to build a system that cannot activate.
-if [ "$HOST" = "grandpa" ] && [ ! -f /var/lib/sops-nix/key.txt ]; then
-    KEY_SRC=""
-    for candidate in "$HOME/age-key.txt" "./age-key.txt"; do
-        if [ -f "$candidate" ]; then
-            KEY_SRC="$candidate"
-            break
-        fi
-    done
-    if [ -n "$KEY_SRC" ]; then
-        echo -e "${INFO}Installing sops age key from ${KEY_SRC}"
-        sudo install -D -m 600 -o root -g root "$KEY_SRC" /var/lib/sops-nix/key.txt
-    else
-        echo -e "${ERROR}No sops age key found."
-        echo -e "${INFO}Put it at /var/lib/sops-nix/key.txt (or ~/age-key.txt) and re-run; see README, 'sops secrets'."
-        exit 1
-    fi
-fi
-
 if [ ! -f /etc/nixos/hardware-configuration.nix ]; then
     echo -e "${ERROR}/etc/nixos/hardware-configuration.nix not found! Aborting."
     exit 1

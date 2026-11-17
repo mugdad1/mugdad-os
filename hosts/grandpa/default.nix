@@ -15,7 +15,6 @@
     ./router-reboot.nix
     ./home-assistant.nix
     ./services.nix
-    ./secrets.nix
     ./searxng.nix
     ./gitea-mirror.nix
   ];

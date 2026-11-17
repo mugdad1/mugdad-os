@@ -5,12 +5,9 @@ result-*
 *.qcow2
 
 # ── secrets ──────────────────────────────────────────────────────────────────
-# Never commit a PRIVATE key or an unencrypted secret. The public age recipient
-# key in .sops.yaml and the ENCRYPTED files under secrets/ are meant to be
-# committed — those are safe by construction. This block is the backstop for
-# the things that are not: an age identity, a .env written by hand, a token
-# pasted into a scratch file during a session.
-.sops/
+# Never commit a private key or an unencrypted secret. This block is the
+# backstop for a key file, a .env written by hand, or a token pasted into a
+# scratch file during a session.
 age/
 keys.txt
 *.agekey

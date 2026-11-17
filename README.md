@@ -23,7 +23,7 @@ All three deploy from `main`.
 ## Layout
 
 ```
-flake.nix                 # mkHost: hosts/<host> + sops-nix; specialArgs host/inputs/variables
+flake.nix                 # mkHost: hosts/<host>; specialArgs host/inputs/variables
 lib/default.nix           # scanPaths — recursive module auto-import
 lib/gruvbox.nix           # palette
 lib/server-index.nix      # grandpa's index page
@@ -31,10 +31,10 @@ hosts/
   victus/                 # default.nix, battery-charge-limit.nix, hardware-configuration.nix, variables.nix
   t480s/                  # default.nix, hardware-configuration.nix, variables.nix
   grandpa/                # default.nix, packages.nix, overrides.nix, backup.nix, router-reboot.nix,
-                          #   home-assistant.nix, services.nix, secrets.nix, searxng.nix, gitea-mirror.nix,
+                          #   home-assistant.nix, services.nix, searxng.nix, gitea-mirror.nix,
                           #   hardware-configuration.nix, variables.nix
 modules/
-  core/                   # shared system layer — every host (17 files)
+  core/                   # shared system layer — every host (16 files)
   desktop/                # desktop environment — laptops only (9 files)
   home/                   # home-manager stack — only where variables declare a desktop
     terminal/             # cli, dev, fish, foot, glow, lazyvim, shell
@@ -43,7 +43,6 @@ modules/
 pkgs/                     # callPackage files: filen-cli.nix, filen-desktop.nix, gitea-mirror.nix
 scripts/                  # wrapped shell scripts (scripts/default.nix)
   grandpa/ac.sh           # read directly by hosts/grandpa/packages.nix
-secrets/fleet.sops.yaml   # encrypted sops file (committed; useless without the age key)
 assets/fonts/ assets/wallpapers/
 ```
 
@@ -79,16 +78,10 @@ sudo nixos-rebuild switch --flake ~/nixos-config#grandpa
 
 ## Secrets
 
-The repo is public, so no credential is written in Nix. Encrypted
-`secrets/fleet.sops.yaml` is committed; the private age key never is.
-
-`grandpa` is the only host that declares sops secrets (`filen/*`, `searx/secret_key`).
-Its key lives at `/var/lib/sops-nix/key.txt` (mode 600, root:root) and must be
-restored before the first switch on a fresh install, or activation fails while
-decrypting. The laptops hold no age key.
-
-Edit with `sops secrets/fleet.sops.yaml`; declare a secret in `sops.secrets` and
-read it via `config.sops.placeholder."<name>"`.
+None are tracked. The repo is public and declares no credential and no secret
+tooling. `filen-sync` authenticates through the `filen` CLI's own login state in
+the user's home (`filen login` once per server); SearXNG uses a fixed
+cookie-signing key in `hosts/grandpa/searxng.nix`, which is not a credential.
 
 ## Development
 

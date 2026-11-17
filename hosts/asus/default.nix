@@ -13,7 +13,6 @@
     ./packages.nix
     ./study.nix
     ./trilium.nix
-    ./secrets.nix
   ];
 
   boot.loader.efi.efiSysMountPoint = "/boot";

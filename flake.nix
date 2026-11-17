@@ -25,11 +25,6 @@
       url = "github:0xc000022070/zen-browser-flake/beta";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {nixpkgs, ...} @ inputs: let
@@ -41,7 +36,6 @@
       nixpkgs.lib.nixosSystem {
         modules = [
           ./hosts/${host}
-          inputs.sops-nix.nixosModules.sops
         ];
         specialArgs = {
           inherit host inputs variables;

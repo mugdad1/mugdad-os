@@ -1,11 +1,8 @@
 # SearXNG — the house search engine, declared natively (no docker). Browsers
 # and the `web-search` helper point at :8888.
-{config, ...}: {
+{...}: {
   services.searx = {
     enable = true;
-
-    # Renders $SEARX_SECRET_KEY during searx-init; systemd reads it as PID 1.
-    environmentFile = config.sops.templates."searxng.env".path;
 
     settings = {
       use_default_settings = true;
@@ -14,7 +11,9 @@
         port = 8888;
         bind_address = "0.0.0.0";
         base_url = "http://100.106.116.60:8888/";
-        secret_key = "$SEARX_SECRET_KEY";
+        # Only signs session cookies on a tailnet-only instance; not a
+        # credential. Rotate by changing this string and restarting searx.
+        secret_key = "searxng-cookie-signing-key-please-rotate";
         limiter = false;
         image_proxy = true;
       };

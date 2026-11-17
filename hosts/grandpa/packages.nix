@@ -27,9 +27,8 @@
     gh
     git
 
-    # Filen + sops are grandpa-only: the laptops hold no age key.
+    # Filen is grandpa-only: the laptops carry no filen CLI.
     (pkgs.callPackage ../../pkgs/filen-cli.nix {})
-    sops
 
     # python3 with the AC/serial libraries used for dongle probing.
     (python3.withPackages (p: [p.pyserial p.aioesphomeapi]))

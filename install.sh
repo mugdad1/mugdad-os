@@ -24,8 +24,12 @@ if ! command -v whiptail &> /dev/null; then
     exit $?
 fi
 
-# Detect the host from DMI. product_name alone is not enough on every box, so
-# product_family is consulted too. Override with HOST=grandpa ./install.sh.
+# DMI names are only a hint. They are missing on some boxes and generic on
+# others (a plain desktop has seemed to be an HP laptop), and picking the
+# wrong host installs the wrong hardware config — a silent, expensive
+# mistake. So DMI only preselects the menu below, and the old 'hp' match is
+# gone because it claimed every HP machine for victus. HOST=<host> skips
+# the question; that is the only non-interactive path.
 DMI_NAME="$(cat /sys/class/dmi/id/product_name 2> /dev/null || true)"
 DMI_FAMILY="$(cat /sys/class/dmi/id/product_family 2> /dev/null || true)"
 
@@ -38,24 +42,41 @@ gpu_for() {
     esac
 }
 
+detect_host() {
+    if grep -qi 't480s\|thinkpad\|20L8' <<< "$DMI_NAME"; then
+        echo "t480s"
+    elif grep -qi 'victus' <<< "$DMI_NAME$DMI_FAMILY"; then
+        echo "victus"
+    elif grep -qi 'x509\|asus' <<< "$DMI_NAME$DMI_FAMILY"; then
+        echo "asus"
+    else
+        echo ""
+    fi
+}
+
+radio() {
+    [ "$1" = "$2" ] && printf 'ON' || printf 'OFF'
+}
+
 if [ -n "${HOST:-}" ]; then
-    GPU="$(gpu_for "$HOST")"
     echo -e "${INFO}Host forced by environment: ${GREEN}$HOST${RESET}"
-elif grep -qi 't480s\|thinkpad\|20L8' <<< "$DMI_NAME"; then
-    HOST="t480s"
-    GPU="intel"
-elif grep -qi 'victus\|hp' <<< "$DMI_NAME$DMI_FAMILY"; then
-    HOST="victus"
-    GPU="nvidia"
-elif grep -qi 'x509\|asus' <<< "$DMI_NAME$DMI_FAMILY"; then
-    HOST="asus"
-    GPU="none"
 else
-    # Unknown hardware defaults to the laptop, never the headless server.
-    HOST="victus"
-    GPU="nvidia"
-    echo -e "${INFO}DMI named no known host; defaulting to ${GREEN}victus${RESET} (force with HOST=<host> ./install.sh)"
+    DETECTED="$(detect_host)"
+    HOST=$(whiptail --title "NixOS Installer" --radiolist \
+        "Which machine is this?\n\nDMI name='${DMI_NAME}' family='${DMI_FAMILY}'\n\nDMI is a guess, not proof: confirm the host yourself." \
+        18 78 5 \
+        "victus" "HP Victus - laptop, NVIDIA" "$(radio victus "$DETECTED")" \
+        "t480s" "ThinkPad T480s - laptop, Intel" "$(radio t480s "$DETECTED")" \
+        "asus" "ASUS X509 - headless server" "$(radio asus "$DETECTED")" \
+        "grandpa" "Grandpa - headless server, GT 210" "$(radio grandpa "$DETECTED")" \
+        3>&1 1>&2 2>&3) || exit 0
+    if [ -z "$HOST" ]; then
+        echo -e "${ERROR}No host selected."
+        exit 1
+    fi
 fi
+
+GPU="$(gpu_for "$HOST")"
 
 CONFIG_USER="$(sed -n 's/.*username = "\([^"]*\)".*/\1/p' "hosts/${HOST}/variables.nix" 2> /dev/null | head -1)"
 SUMMARY="\

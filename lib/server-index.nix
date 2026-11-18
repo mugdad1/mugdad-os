@@ -46,20 +46,20 @@
     }
     {
       name = "forgejo";
-      host = "grandpa";
+      host = "asus";
       port = "3000";
       desc = "git, self-hosted — replaced gitea";
     }
     {
       name = "gitea mirror";
-      host = "grandpa";
+      host = "asus";
       port = "4321";
       desc = "github → forgejo mirroring, native systemd";
       note = "tailnet only";
     }
     {
       name = "searxng";
-      host = "grandpa";
+      host = "asus";
       port = "8888";
       desc = "private metasearch, json api enabled — zen's search engine";
     }

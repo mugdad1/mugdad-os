@@ -13,9 +13,9 @@ ENGINE=$(echo -e "SearXNG\nDuckDuckGo\nNixOS Packages\nFreeTube" | rofi -dmenu -
 ENCODED=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "$QUERY")
 
 case "$ENGINE" in
-    # 100.106.116.60 since 2026-10-22: searxng now runs on grandpa, declared
-    # Nix-native there (hosts/grandpa/searxng.nix) as the ThinkCentre goes back.
-    "SearXNG") xdg-open "http://100.106.116.60:8888/search?q=$ENCODED" ;;
+    # Moved to asus 2026-11-18 (hosts/asus/searxng.nix); it ran on grandpa
+    # from 2026-10-22 until then.
+    "SearXNG") xdg-open "http://100.92.54.61:8888/search?q=$ENCODED" ;;
     "DuckDuckGo") xdg-open "https://duckduckgo.com/?q=$ENCODED" ;;
     "NixOS Packages") xdg-open "https://search.nixos.org/packages?query=$ENCODED" ;;
     "FreeTube") freetube "https://www.youtube.com/results?search_query=$ENCODED" & ;;

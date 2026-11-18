@@ -122,7 +122,7 @@ in {
             name = "SearXNG";
             urls = [
               {
-                template = "http://100.106.116.60:8888/search";
+                template = "http://100.92.54.61:8888/search";
                 params = [
                   {
                     name = "q";
@@ -131,7 +131,7 @@ in {
                 ];
               }
             ];
-            icon = "http://100.106.116.60:8888/favicon.ico";
+            icon = "http://100.92.54.61:8888/favicon.ico";
             definedAliases = ["@sx"];
           };
           ddg.metaData = {};

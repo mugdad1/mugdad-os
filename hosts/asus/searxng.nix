@@ -1,5 +1,5 @@
-# SearXNG — the house search engine, declared natively (no docker). Browsers
-# and the `web-search` helper point at :8888.
+# SearXNG — the house search engine, declared natively (no docker). Moved here
+# from grandpa 2026-11-18; browsers and the `web-search` helper point at :8888.
 {...}: {
   services.searx = {
     enable = true;
@@ -10,7 +10,7 @@
       server = {
         port = 8888;
         bind_address = "0.0.0.0";
-        base_url = "http://100.106.116.60:8888/";
+        base_url = "http://100.92.54.61:8888/";
         # Only signs session cookies on a tailnet-only instance; not a
         # credential. Rotate by changing this string and restarting searx.
         secret_key = "searxng-cookie-signing-key-please-rotate";

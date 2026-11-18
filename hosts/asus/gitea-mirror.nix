@@ -1,5 +1,6 @@
-# gitea-mirror — GitHub → Forgejo mirroring, native systemd on grandpa.
-# Tailnet-only on :4321; the unit reads /var/lib/gitea-mirror/env.
+# gitea-mirror — GitHub → Forgejo mirroring, native systemd on asus (moved from
+# grandpa 2026-11-18). Tailnet-only on :4321; the unit reads
+# /var/lib/gitea-mirror/env.
 {pkgs, ...}: let
   giteaMirror = pkgs.callPackage ../../pkgs/gitea-mirror.nix {};
 in {

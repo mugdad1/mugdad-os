@@ -15,8 +15,6 @@
     ./router-reboot.nix
     ./home-assistant.nix
     ./services.nix
-    ./searxng.nix
-    ./gitea-mirror.nix
   ];
 
   boot.loader.efi.efiSysMountPoint = "/boot";
@@ -37,27 +35,8 @@
     priority = 100;
   };
 
-  services.forgejo = {
-    enable = true;
-    settings = {
-      server = {
-        DOMAIN = "100.106.116.60";
-        ROOT_URL = "http://100.106.116.60:3000/";
-        HTTP_PORT = 3000;
-        LANDING_PAGE = "explore";
-      };
-      service = {
-        # Open so the first account becomes admin; close it after first login.
-        DISABLE_REGISTRATION = false;
-        REQUIRE_SIGNIN_VIEW = false;
-      };
-      repository.DEFAULT_BRANCH = "main";
-    };
-    # SQLite is enough for a handful of repos on a 6 GiB box.
-    database.type = "sqlite3";
-    stateDir = "/var/lib/forgejo";
-  };
-  networking.firewall.allowedTCPPorts = [3000];
+  # Forgejo, gitea-mirror and SearXNG moved to asus on 2026-11-18. Their data
+  # was moved with them; no port or unit for them remains on this host.
 
   # Docker engine stays installed; the compose stack it used to run is gone.
   virtualisation.docker.enable = true;

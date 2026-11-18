@@ -14,7 +14,8 @@ All three deploy from `main`.
 | --- | --- | --- |
 | `victus` | Daily laptop — Cinnamon + Hyprland, home-manager, Intel iGPU + RTX 3050 | HP Victus 15, i5-12500H |
 | `t480s` | Second laptop — Cinnamon + Hyprland, home-manager, Intel iGPU only | ThinkPad T480s |
-| `grandpa` | Headless server — Forgejo, gitea-mirror, nginx, HA, SearXNG, study, blocky, Docker engine, backups | Custom i3-2120 |
+| `asus` | Headless server — Forgejo, gitea-mirror, SearXNG, study, Trilium, blocky | ASUS X509, i3-8xxxU |
+| `grandpa` | Headless server — nginx, HA, blocky, Docker engine, router reboot | Custom i3-2120 |
 
 `grandpa` imports `modules/core` only: no desktop, no home-manager. Its
 `variables.nix` declares no `browser`/`terminal`/`launcher`, and
@@ -30,8 +31,10 @@ lib/server-index.nix      # grandpa's index page
 hosts/
   victus/                 # default.nix, battery-charge-limit.nix, hardware-configuration.nix, variables.nix
   t480s/                  # default.nix, hardware-configuration.nix, variables.nix
-  grandpa/                # default.nix, packages.nix, overrides.nix, backup.nix, router-reboot.nix,
-                          #   home-assistant.nix, services.nix, searxng.nix, gitea-mirror.nix,
+  asus/                   # default.nix, packages.nix, study.nix, trilium.nix, searxng.nix,
+                          #   gitea-mirror.nix, hardware-configuration.nix, variables.nix
+  grandpa/                # default.nix, packages.nix, overrides.nix, router-reboot.nix,
+                          #   home-assistant.nix, services.nix,
                           #   hardware-configuration.nix, variables.nix
 modules/
   core/                   # shared system layer — every host (16 files)
@@ -74,6 +77,7 @@ mcli update                  # flake update + rebuild
 sudo nixos-rebuild switch --flake ~/nixos-config#victus
 sudo nixos-rebuild switch --flake ~/nixos-config#t480s
 sudo nixos-rebuild switch --flake ~/nixos-config#grandpa
+sudo nixos-rebuild switch --flake ~/nixos-config#asus
 ```
 
 ## Secrets
@@ -81,7 +85,7 @@ sudo nixos-rebuild switch --flake ~/nixos-config#grandpa
 None are tracked. The repo is public and declares no credential and no secret
 tooling. `filen-sync` authenticates through the `filen` CLI's own login state in
 the user's home (`filen login` once per server); SearXNG uses a fixed
-cookie-signing key in `hosts/grandpa/searxng.nix`, which is not a credential.
+cookie-signing key in `hosts/asus/searxng.nix`, which is not a credential.
 
 ## Development
 

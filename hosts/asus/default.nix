@@ -13,6 +13,9 @@
     ./packages.nix
     ./study.nix
     ./trilium.nix
+    # Moved from grandpa 2026-11-18.
+    ./searxng.nix
+    ./gitea-mirror.nix
   ];
 
   boot.loader.efi.efiSysMountPoint = "/boot";
@@ -48,6 +51,32 @@
     algorithm = "lz4";
     memoryPercent = 50;
     priority = 100;
+  };
+
+  # Forgejo moved here from grandpa on 2026-11-18 along with its SQLite state
+  # in /var/lib/forgejo. Pin the uid because that data is chowned to 1002/1002:
+  # 994/991 (grandpa's old numbers) are taken by rtkit on this box.
+  users.users.forgejo.uid = 1002;
+  users.groups.forgejo.gid = 1002;
+
+  services.forgejo = {
+    enable = true;
+    settings = {
+      server = {
+        DOMAIN = "100.92.54.61";
+        ROOT_URL = "http://100.92.54.61:3000/";
+        HTTP_PORT = 3000;
+        LANDING_PAGE = "explore";
+      };
+      service = {
+        # Open so the first account becomes admin; close it after first login.
+        DISABLE_REGISTRATION = false;
+        REQUIRE_SIGNIN_VIEW = false;
+      };
+      repository.DEFAULT_BRANCH = "main";
+    };
+    database.type = "sqlite3";
+    stateDir = "/var/lib/forgejo";
   };
 
   # Garbage collection is already fleet-wide: modules/core/nh.nix enables
@@ -102,7 +131,8 @@
     "quic:2b44bd66.d.adguard-dns.com"
   ];
   services.blocky.settings.ports.dns = lib.mkForce "0.0.0.0:53";
-  networking.firewall.allowedTCPPorts = [53];
+  # 3000 is Forgejo, moved here from grandpa with the other two web services.
+  networking.firewall.allowedTCPPorts = [53 3000];
   networking.firewall.allowedUDPPorts = [53];
 
   users.users.${username} = {

@@ -14,7 +14,7 @@ All three deploy from `main`.
 | --- | --- | --- |
 | `victus` | Daily laptop — Cinnamon + Hyprland, home-manager, Intel iGPU + RTX 3050 | HP Victus 15, i5-12500H |
 | `t480s` | Second laptop — Cinnamon + Hyprland, home-manager, Intel iGPU only | ThinkPad T480s |
-| `asus` | Headless server — Forgejo, gitea-mirror, SearXNG, study, Trilium, blocky | ASUS X509, i3-8xxxU |
+| `asus` | Headless server — Forgejo, gitea-mirror, SearXNG, study, blocky | ASUS X509, i3-8xxxU |
 | `grandpa` | Headless server — nginx, HA, blocky, Docker engine, router reboot | Custom i3-2120 |
 
 `grandpa` imports `modules/core` only: no desktop, no home-manager. Its
@@ -31,7 +31,7 @@ lib/server-index.nix      # grandpa's index page
 hosts/
   victus/                 # default.nix, battery-charge-limit.nix, hardware-configuration.nix, variables.nix
   t480s/                  # default.nix, hardware-configuration.nix, variables.nix
-  asus/                   # default.nix, packages.nix, study.nix, trilium.nix, searxng.nix,
+  asus/                   # default.nix, packages.nix, study.nix, searxng.nix,
                           #   gitea-mirror.nix, hardware-configuration.nix, variables.nix
   grandpa/                # default.nix, packages.nix, overrides.nix, router-reboot.nix,
                           #   home-assistant.nix, services.nix,

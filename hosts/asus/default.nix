@@ -12,7 +12,6 @@
     ../../modules/core
     ./packages.nix
     ./study.nix
-    ./trilium.nix
     # Moved from grandpa 2026-11-18.
     ./searxng.nix
     ./gitea-mirror.nix

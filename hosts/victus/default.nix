@@ -6,6 +6,7 @@
 }: {
   imports = [
     ./battery-charge-limit.nix
+    ./elan-touchpad.nix
     ./hardware-configuration.nix
     ../../modules/core
     ../../modules/desktop
@@ -55,6 +56,10 @@
     stopAt = 85;
     resumeAt = 82;
   };
+
+  # The ELAN pad boots in mouse mode; this switches it to PTP mode so
+  # two-finger scrolling works in Hyprland/Cinnamon.
+  services.victus.elanTouchpadPtp.enable = true;
 
   environment.systemPackages = [
     pkgs.nvtopPackages.full

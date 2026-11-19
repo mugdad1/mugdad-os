@@ -39,8 +39,14 @@
             invidious_companion:
               - private_url: "http://companion:8282/companion"
             invidious_companion_key: ''${INVIDIOUS_COMPANION_KEY}
-            domain: ""
+            # An IP is fine here: make_host_url() builds absolute API URLs from
+            # domain + external_port. Without this, `?local=true` (the proxy
+            # flag phone clients need) returns unusable relative URLs.
+            domain: "100.106.116.60"
+            external_port: 8091
             https_only: false
+            default_user_preferences:
+              local: true
         healthcheck:
           test: wget -nv --tries=1 --spider http://127.0.0.1:3000/api/v1/stats || exit 1
           interval: 30s

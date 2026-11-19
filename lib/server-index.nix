@@ -33,10 +33,10 @@
       first = true;
     }
     {
-      name = "home assistant";
+      name = "seafile";
       host = "grandpa";
-      port = "8123";
-      desc = "local home automation — the ac, dashboards, sensors";
+      port = "8090";
+      desc = "self-hosted file sync — web ui + desktop/mobile apps, the open filen";
     }
     {
       name = "forgejo";

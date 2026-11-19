@@ -13,7 +13,7 @@
     ./packages.nix
     ./overrides.nix
     ./router-reboot.nix
-    ./home-assistant.nix
+    ./seafile.nix
     ./services.nix
   ];
 

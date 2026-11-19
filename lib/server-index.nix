@@ -39,16 +39,11 @@
       desc = "self-hosted file sync — web ui + desktop/mobile apps, the open filen";
     }
     {
-      name = "metube";
+      name = "invidious";
       host = "grandpa";
       port = "8091";
-      desc = "yt-dlp web ui — paste a YouTube link, download it locally";
-    }
-    {
-      name = "jellyfin";
-      host = "grandpa";
-      port = "8092";
-      desc = "play the downloaded videos — mobile + tv apps";
+      desc = "self-hosted YouTube front end + API — FreeTube / NewPipe / web ui";
+      note = "tailnet only";
     }
     {
       name = "forgejo";

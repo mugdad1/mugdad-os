@@ -14,7 +14,7 @@
     ./overrides.nix
     ./router-reboot.nix
     ./seafile.nix
-    ./media.nix
+    ./invidious.nix
     ./services.nix
   ];
 

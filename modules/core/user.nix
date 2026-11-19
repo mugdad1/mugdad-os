@@ -14,8 +14,11 @@
     extraSpecialArgs = {inherit inputs username host variables;};
     users.${username} = {
       # The desktop home stack requires variables.browser/terminal/launcher, so
-      # a headless host simply does not declare them.
-      imports = lib.optionals (variables ? browser) [../home];
+      # headless hosts do not declare them. They still get the git config:
+      # importing the whole home tree here would drag in the desktop stack.
+      imports =
+        (lib.optionals (variables ? browser) [../home])
+        ++ (lib.optionals (!(variables ? browser)) [../home/apps/git.nix]);
       home.username = username;
       home.homeDirectory = "/home/${username}";
       home.stateVersion = "26.05";

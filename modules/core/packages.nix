@@ -28,6 +28,8 @@
 
     # Seafile desktop client (2 servers + 2 laptops).
     seafile-client
+    # Provides seaf-cli / seaf-daemon for headless folder sync.
+    seafile-shared
     nftables # `sudo nft list ruleset` — the firewall is nftables
 
     # adb / fastboot for his phone. androidSdk/flutter were dropped 2026-10-13.

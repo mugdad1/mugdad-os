@@ -7,6 +7,9 @@
 # files and init script into postgres, so both are vendored from the pinned tag
 # under ./invidious-sql instead of cloning the repo on the host.
 #
+# No `logging.options` here: upstream's example assumes the json-file driver,
+# but this host's daemon logs to journald, which rejects max-size/max-file.
+#
 # No secret lives in the repo: /etc/invidious/invidious.env is generated on
 # first start, mode 0600, with the DB password, HMAC key and companion key.
 # Read them with: sudo cat /etc/invidious/invidious.env
@@ -43,10 +46,6 @@
           interval: 30s
           timeout: 5s
           retries: 2
-        logging:
-          options:
-            max-size: "1G"
-            max-file: "4"
         depends_on:
           postgres:
             condition: service_healthy
@@ -61,10 +60,6 @@
           SERVER_SECRET_KEY: ''${INVIDIOUS_COMPANION_KEY}
         volumes:
           - companioncache:/var/tmp/youtubei.js:rw
-        logging:
-          options:
-            max-size: "1G"
-            max-file: "4"
         cap_drop:
           - ALL
         read_only: true

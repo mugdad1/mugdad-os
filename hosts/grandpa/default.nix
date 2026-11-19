@@ -14,6 +14,7 @@
     ./overrides.nix
     ./router-reboot.nix
     ./seafile.nix
+    ./media.nix
     ./services.nix
   ];
 

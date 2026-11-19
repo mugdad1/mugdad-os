@@ -39,6 +39,18 @@
       desc = "self-hosted file sync — web ui + desktop/mobile apps, the open filen";
     }
     {
+      name = "metube";
+      host = "grandpa";
+      port = "8091";
+      desc = "yt-dlp web ui — paste a YouTube link, download it locally";
+    }
+    {
+      name = "jellyfin";
+      host = "grandpa";
+      port = "8092";
+      desc = "play the downloaded videos — mobile + tv apps";
+    }
+    {
       name = "forgejo";
       host = "asus";
       port = "3000";

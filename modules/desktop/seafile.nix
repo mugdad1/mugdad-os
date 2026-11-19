@@ -1,16 +1,20 @@
-# seafile-sync — keeps ~/filen in sync with the "filen" library on grandpa.
-# The library was created once via the Seahub API; its id is public metadata.
-# The auth token lives only in the client's own config under the user's home
-# (written by `seaf-cli sync`), never in this repo.
+# Seafile on laptops only (t480s + victus): GUI client plus the CLI daemon
+# that keeps ~/filen synced with the "filen" library on grandpa.
+# The library id is public metadata; the auth token lives only in the
+# client's own config under the user's home (written by `seaf-cli sync`).
 {
   lib,
   pkgs,
   host,
   username,
   ...
-}:
-lib.mkIf (host == "victus") {
-  systemd.services.seafile-filen-sync = {
+}: {
+  environment.systemPackages = with pkgs; [
+    seafile-client
+    seafile-shared
+  ];
+
+  systemd.services.seafile-filen-sync = lib.mkIf (host == "victus") {
     description = "Seafile CLI sync for ~/filen";
     after = ["network-online.target"];
     wants = ["network-online.target"];

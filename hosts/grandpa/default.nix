@@ -1,5 +1,6 @@
-# grandpa — headless server: Intel i3-2120, 6 GiB RAM, one 298 GiB HDD, no
-# discrete GPU. Imports modules/core only; never modules/desktop.
+# grandpa — headless server: Intel i3-2120, 6 GiB RAM, one 1 TB HDD, no
+# discrete GPU. Imports modules/core plus host-local siblings; never
+# modules/desktop.
 {
   pkgs,
   username,
@@ -39,7 +40,8 @@
   # Forgejo, gitea-mirror and SearXNG moved to asus on 2026-11-18. Their data
   # was moved with them; no port or unit for them remains on this host.
 
-  # Docker engine stays installed; the compose stack it used to run is gone.
+  # Docker engine stays installed; the directory sweep is gone. Two explicit
+  # compose projects remain: seafile (:8090) and invidious (:8091).
   virtualisation.docker.enable = true;
   users.users.${username}.extraGroups = ["docker"];
 

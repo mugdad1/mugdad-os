@@ -1,6 +1,7 @@
 # ASUS X509 (i3-8xxxU, 4 GiB, RTL8821CE) — headless Wi-Fi server. The OS lives
-# on the SATA SSD; the 1 TB Seagate is mounted at /srv/storage. Imports
-# modules/core only, never modules/desktop.
+# on the 512 GB SK hynix SATA SSD. No second disk is fitted as of 2026-11-19;
+# the /srv/storage mount below is a reserved slot, not current hardware.
+# Imports modules/core plus host-local siblings; never modules/desktop.
 {
   lib,
   pkgs,
@@ -36,15 +37,16 @@
     options rtw88_core disable_lps_deep=1
   '';
 
-  # The 1 TB disk. Label, not UUID, so the disk can move to a USB enclosure
-  # without editing anything; nofail so a dead platter never blocks boot.
+  # Reserved slot for a future disk. Label, not UUID, so the disk can move to
+  # a USB enclosure without editing anything; nofail so no disk never blocks
+  # boot. No platter is fitted as of 2026-11-19.
   fileSystems."/srv/storage" = {
     device = "/dev/disk/by-label/asus-storage";
     fsType = "ext4";
     options = ["nofail" "x-systemd.device-timeout=10"];
   };
 
-  # 4 GiB with no desktop: compressed swap keeps the store off the platter.
+  # 4 GiB with no desktop: compressed swap protects the small RAM budget.
   zramSwap = {
     enable = true;
     algorithm = "lz4";
@@ -83,8 +85,8 @@
   # nix.gc.automatic as well would run a second collector against the same
   # store, so it stays off here too.
 
-  # smartctl is installed, but nothing watches the 1 TB platter until smartd
-  # does. No mail transport on this box: findings land in the journal.
+  # smartd watches the SSD; there is no second disk to watch right now.
+  # No mail transport on this box: findings land in the journal.
   services.smartd = {
     enable = true;
     notifications.wall.enable = false;

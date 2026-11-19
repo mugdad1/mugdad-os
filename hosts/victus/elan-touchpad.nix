@@ -5,9 +5,11 @@
 # but this PID (04F3:321A) is not in its ID table. Without the switch,
 # libinput gets no ABS_MT events and two-finger scrolling cannot work.
 #
-# The controller is not always ready when its HID node first appears: an early
-# feature-report write can succeed at the ioctl level but be ignored. This
-# service therefore retries the switch and only reports success after the
+# Two boot races are handled here. The ACPI/I2C device sometimes does not bind
+# to i2c_hid_acpi by itself, so the script forces that bind if no HID node shows
+# up. Then the controller is not always ready when its HID node first appears:
+# an early feature-report write can succeed at the ioctl level but be ignored.
+# The switch is therefore retried and only reported successful after the
 # touchpad's evdev node actually advertises multitouch absolute axes.
 {
   config,
@@ -24,12 +26,16 @@
     import time
 
     HID_GLOB = "/sys/bus/hid/devices/0018:04F3:321A.*"
+    I2C_DEVICE = "/sys/bus/i2c/devices/i2c-ELAN0788:00"
+    I2C_DRIVER = "/sys/bus/i2c/drivers/i2c_hid_acpi"
     MARKER = "/run/elan-ptp-mode.done"
     # Feature report 3: ELAN's vendor command to enable PTP/absolute mode.
     MAGIC = bytes([0x03, 0x33, 0x03, 0x06, 0x00, 0x05, 0x00, 0x03, 0x03, 0x00])
 
     # evdev absolute-axis bits: SLOT, POSITION_X, POSITION_Y, TRACKING_ID.
     REQUIRED_ABS = (1 << 47) | (1 << 53) | (1 << 54) | (1 << 57)
+
+    _last_bind_attempt = 0.0
 
     def log(message):
         print("elan-ptp: " + message, flush=True)
@@ -41,6 +47,22 @@
     def hidraw_node(hid):
         nodes = glob.glob(hid + "/hidraw/hidraw*")
         return "/dev/" + os.path.basename(nodes[0]) if nodes else None
+
+    def ensure_i2c_bound():
+        # This ACPI/I2C device occasionally fails to auto-bind at boot; without
+        # i2c_hid_acpi there is no HID node at all for the mode switch below.
+        global _last_bind_attempt
+        if not os.path.isdir(I2C_DEVICE) or os.path.exists(I2C_DEVICE + "/driver"):
+            return
+        if time.monotonic() - _last_bind_attempt < 2:
+            return
+        _last_bind_attempt = time.monotonic()
+        try:
+            with open(I2C_DRIVER + "/bind", "w") as handle:
+                handle.write(os.path.basename(I2C_DEVICE))
+            log("bound ELAN I2C device to i2c_hid_acpi")
+        except OSError as error:
+            log("i2c_hid_acpi bind failed: " + str(error))
 
     def ptp_active(hid):
         pattern = hid + "/input/input*/event*/device/capabilities/abs"
@@ -56,6 +78,7 @@
     def wait_for_hid(timeout):
         deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
+            ensure_i2c_bound()
             hid = hid_device()
             if hid and hidraw_node(hid):
                 return hid
@@ -141,7 +164,7 @@ in {
   '';
 
   config = lib.mkIf cfg.enable {
-    boot.kernelModules = ["hid_multitouch"];
+    boot.kernelModules = ["hid_multitouch" "i2c_hid_acpi"];
 
     systemd.services.elan-ptp-mode = {
       description = "Enable PTP mode on the ELAN touchpad (two-finger scroll)";

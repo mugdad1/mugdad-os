@@ -59,10 +59,29 @@ in {
       RemainAfterExit = true;
       Restart = "on-failure";
       RestartSec = "30s";
+      TimeoutStartSec = "6min";
     };
+    # `network-online.target` only means an IP link exists: on this box wifi
+    # associates and blocky gets its upstream later, so flatpak can still die
+    # with "Could not resolve hostname". Most boots only need the already
+    # installed runtime, so check locally first and never touch the network.
+    # When a real install is needed, wait for DNS before invoking flatpak.
     script = ''
-      exec ${pkgs.flatpak}/bin/flatpak install --system --noninteractive flathub \
-        ${nvidiaGlRuntime}
+      runtime="${nvidiaGlRuntime}"
+      if ${pkgs.flatpak}/bin/flatpak info --system "$runtime" >/dev/null 2>&1; then
+        echo "Skipping: $runtime is already installed"
+        exit 0
+      fi
+
+      for attempt in $(seq 1 60); do
+        if getent ahosts dl.flathub.org >/dev/null 2>&1; then
+          exec ${pkgs.flatpak}/bin/flatpak install --system --noninteractive flathub "$runtime"
+        fi
+        sleep 5
+      done
+
+      echo "DNS for dl.flathub.org never came up; $runtime was not installed" >&2
+      exit 1
     '';
   };
 

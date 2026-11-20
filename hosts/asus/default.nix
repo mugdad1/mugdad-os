@@ -1,6 +1,8 @@
-# ASUS X509 (i3-8xxxU, 4 GiB, RTL8821CE) — headless Wi-Fi server. The OS lives
+# ASUS X509 (i3-8xxxU, 8 GiB, RTL8821CE) — headless Wi-Fi server. The OS lives
 # on the 512 GB SK hynix SATA SSD. No second disk is fitted as of 2026-11-19;
 # the /srv/storage mount below is a reserved slot, not current hardware.
+# 8 GiB since the fleet RAM swap on 2026-11-20 (4 + 4 DDR4-2400, both slots);
+# it was a single 4 GiB stick before that.
 # Imports modules/core plus host-local siblings; never modules/desktop.
 {
   lib,
@@ -46,7 +48,8 @@
     options = ["nofail" "x-systemd.device-timeout=10"];
   };
 
-  # 4 GiB with no desktop: compressed swap protects the small RAM budget.
+  # 8 GiB with no desktop (4 GiB before 2026-11-20): compressed swap still
+  # protects the budget if a build spikes.
   zramSwap = {
     enable = true;
     algorithm = "lz4";

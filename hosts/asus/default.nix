@@ -1,6 +1,10 @@
-# ASUS X509 (i3-8xxxU, 8 GiB, RTL8821CE) — headless Wi-Fi server. The OS lives
-# on the 512 GB SK hynix SATA SSD. No second disk is fitted as of 2026-11-19;
-# the /srv/storage mount below is a reserved slot, not current hardware.
+# ASUS X509 (i3-8xxxU, 8 GiB, RTL8821CE) — headless Wi-Fi server: the board,
+# RAM, Wi-Fi card and the 512 GB SK hynix SATA SSD, nothing else. No screen,
+# no keyboard, and **no battery pack** — the EC still exposes BAT0 with
+# `present=1`, but it reports 0 energy and no capacity, so there is nothing to
+# charge-limit (the old asus-charge-limit unit was removed 2026-11-20).
+# No second disk is fitted as of 2026-11-19; the /srv/storage mount below is a
+# reserved slot, not current hardware.
 # 8 GiB since the fleet RAM swap on 2026-11-20 (4 + 4 DDR4-2400, both slots);
 # it was a single 4 GiB stick before that.
 # Imports modules/core plus host-local siblings; never modules/desktop.
@@ -95,36 +99,13 @@
     notifications.wall.enable = false;
   };
 
-  # It is a server: closing the lid must not stop it, and nothing may suspend.
-  services.logind.settings.Login = {
-    HandleLidSwitch = "ignore";
-    HandleLidSwitchExternalPower = "ignore";
-    HandleLidSwitchDocked = "ignore";
-  };
+  # It is a server: nothing may suspend it. There is no lid to switch on, so
+  # the old HandleLidSwitch entries and the battery charge limit are gone
+  # (2026-11-20) — this box has no pack, as BAT0 reports 0 energy.
   systemd.targets.sleep.enable = false;
   systemd.targets.suspend.enable = false;
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
-
-  # 24/7 on AC: a pack held at 100% swells within a year. ASUS exposes the
-  # threshold through the standard sysfs attribute; write it if it is there.
-  systemd.services."asus-charge-limit" = {
-    description = "Cap the battery charge at 70%";
-    wantedBy = ["multi-user.target"];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      limit=/sys/class/power_supply/BAT0/charge_control_end_threshold
-      if [ -w "$limit" ]; then
-        echo 70 > "$limit"
-        echo "asus: charge limited to 70%"
-      else
-        echo "asus: $limit missing; firmware exposes no charge limit" >&2
-      fi
-    '';
-  };
 
   # Same resolver as grandpa: this box is also at home, where DoT/DoQ are not
   # blocked, so it races the encrypted transports itself instead of DoH, and

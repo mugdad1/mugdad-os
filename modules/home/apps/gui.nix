@@ -19,10 +19,9 @@
     ungoogled-chromium
     tor-browser
 
-    ## Cloud storage — the Seafile desktop client (laptops) and the
-    ## headless seafile-client daemon on the servers are declared in
-    ## modules/desktop/seafile.nix and modules/core/seafile-client.nix.
-    ## Filen was removed on 2026-11-20.
+    ## Cloud storage — the headless seafile-client daemon and CLI are
+    ## declared in modules/core/seafile-client.nix. There is no GUI client
+    ## on any host anymore; Filen was removed on 2026-11-20.
 
     ## Office / Productivity
     libreoffice-stable

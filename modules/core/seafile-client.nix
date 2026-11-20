@@ -1,18 +1,16 @@
 # seafile-client — headless two-way sync of the "storage" library into
-# ~/seafile. Servers only (grandpa, asus): a desktop has no need for a second
-# daemon when the GUI client in modules/desktop/seafile.nix can do it.
+# ~/seafile on every host, servers and laptops alike. There is no GUI client
+# in the fleet: the same daemon and the same CLI run everywhere, so every
+# machine holds the identical library at the same path.
 #
 # The login token lives in ~/.seafile-cli, never in this repo. Bootstrap once
 # per host (seaf-cli init/login/sync); after that this unit keeps the daemon
 # running and the folder syncing.
 {
-  lib,
   pkgs,
-  host,
   username,
   ...
-}:
-lib.mkIf (host == "grandpa" || host == "asus") {
+}: {
   environment.systemPackages = [pkgs.seafile-shared];
 
   systemd.services.seafile-client = {

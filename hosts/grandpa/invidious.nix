@@ -85,7 +85,14 @@
           POSTGRES_USER: kemal
           POSTGRES_PASSWORD: ''${INVIDIOUS_DB_PASSWORD}
         healthcheck:
-          test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+          # pg_isready returns 0 as soon as the socket answers — including
+          # while crash recovery is still running. That is how Invidious used
+          # to start against a database that then rejected every query with
+          # "the database system is in recovery mode", which surfaced to
+          # clients as a minute of "failed to fetch". Gate on the recovery
+          # flag instead: `f` means writable, `t` (or a refused connection)
+          # keeps the stack waiting.
+          test: ["CMD-SHELL", "psql -U $$POSTGRES_USER -d $$POSTGRES_DB -v ON_ERROR_STOP=1 -tAc 'SELECT pg_is_in_recovery()' | grep -qx f"]
           interval: 10s
           timeout: 5s
           retries: 5

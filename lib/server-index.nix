@@ -1,8 +1,6 @@
 # The fleet's service list, declared once and rendered to the HTML index that
 # nginx serves on grandpa. Add a service here and a rebuild publishes it.
-{
-  g ? import ./gruvbox.nix,
-}: let
+{g ? import ./gruvbox.nix}: let
   inherit (builtins) concatStringsSep filter length map;
   optionalString = cond: str:
     if cond

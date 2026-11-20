@@ -7,4 +7,4 @@
 # Collapsing every dotted path into nested attrsets would be a large,
 # readability-only rewrite of generated hardware configs and host modules.
 disabled = ["repeated_keys"]
-ignore = [".direnv"]
+ignore = [".direnv", "hosts/*/hardware-configuration.nix"]

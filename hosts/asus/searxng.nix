@@ -1,6 +1,6 @@
 # SearXNG — the house search engine, declared natively (no docker). Moved here
 # from grandpa 2026-11-18; browsers and the `web-search` helper point at :8888.
-{...}: {
+_: {
   services.searx = {
     enable = true;
 

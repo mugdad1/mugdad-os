@@ -230,7 +230,7 @@ in {
     # hook, so the package itself is replaced with an empty directory. It is
     # referenced nowhere else in nixpkgs, so nothing else loses it.
     nixpkgs.overlays = [
-      (final: prev: {
+      (_final: prev: {
         gnome-online-accounts-gtk = prev.emptyDirectory;
       })
     ];

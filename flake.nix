@@ -29,6 +29,7 @@
 
   outputs = {nixpkgs, ...} @ inputs: let
     system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
 
     mkHost = host: let
       variables = import ./hosts/${host}/variables.nix;
@@ -43,11 +44,11 @@
         };
       };
   in {
-    formatter.${system} = nixpkgs.legacyPackages.${system}.alejandra;
+    formatter.${system} = pkgs.alejandra;
 
     devShells.${system} = {
-      default = nixpkgs.legacyPackages.${system}.mkShell {
-        packages = with nixpkgs.legacyPackages.${system}; [
+      default = pkgs.mkShell {
+        packages = with pkgs; [
           alejandra
           statix
           deadnix
@@ -60,14 +61,14 @@
         ];
       };
 
-      kernel = nixpkgs.legacyPackages.${system}.mkShell {
-        packages = with nixpkgs.legacyPackages.${system}; [
+      kernel = pkgs.mkShell {
+        packages = with pkgs; [
           gnumake
           gcc
           linuxPackages_latest.kernel.dev
         ];
         shellHook = ''
-          export KDIR="${nixpkgs.legacyPackages.${system}.linuxPackages_latest.kernel.dev}/lib/modules/${nixpkgs.legacyPackages.${system}.linuxPackages_latest.kernel.dev.version}/build"
+          export KDIR="${pkgs.linuxPackages_latest.kernel.dev}/lib/modules/${pkgs.linuxPackages_latest.kernel.dev.version}/build"
           echo "Kernel dev shell ready"
           echo "Kernel: $(uname -r)"
           echo "KDIR: $KDIR"

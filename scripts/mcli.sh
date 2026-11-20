@@ -63,8 +63,8 @@ cmd_update() {
         info "Updating Flatpak apps..."
         # sudo drops the session bus, which makes flatpak die with
         # "dbus-launch --autolaunch" errors; give it a private session bus.
-        sudo dbus-run-session -- flatpak update -y --noninteractive \
-            || warn "Flatpak update had errors (see output above)"
+        sudo dbus-run-session -- flatpak update -y --noninteractive ||
+            warn "Flatpak update had errors (see output above)"
         ok "Flatpak update complete"
     else
         warn "flatpak is not installed, skipping"

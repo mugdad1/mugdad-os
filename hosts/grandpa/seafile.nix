@@ -5,7 +5,7 @@
 # No secret lives in the repo: /etc/seafile/seafile.env is generated on first
 # start, mode 0600, with a random MariaDB root password and admin password.
 # Read them with: sudo cat /etc/seafile/seafile.env
-{lib, pkgs, ...}: let
+{pkgs, ...}: let
   port = 8090;
   compose = ''
     name: seafile

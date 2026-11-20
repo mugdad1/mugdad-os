@@ -13,7 +13,7 @@
 # No secret lives in the repo: /etc/invidious/invidious.env is generated on
 # first start, mode 0600, with the DB password, HMAC key and companion key.
 # Read them with: sudo cat /etc/invidious/invidious.env
-{lib, pkgs, ...}: let
+{pkgs, ...}: let
   port = 8091;
   sqlDir = ./invidious-sql;
   compose = ''

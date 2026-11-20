@@ -92,14 +92,15 @@ cookie-signing key in `hosts/asus/searxng.nix`, which is not a credential.
 ```bash
 nix develop                  # alejandra, shfmt, stylua, taplo, statix, deadnix, shellcheck, nixd
 nix fmt                      # treefmt (alejandra/shfmt/stylua/taplo)
-alejandra --check $(git ls-files '*.nix')
 statix check
-deadnix --fail
+deadnix --fail --exclude 'hosts/*/hardware-configuration.nix'
 nix flake check
 ```
 
-`nix fmt` currently fails when `stylua` is not on `PATH`; run `alejandra`
-directly in that case.
+Run these inside `nix develop`: `treefmt` needs `stylua`/`taplo` on `PATH`.
+`treefmt.toml` and `statix.toml` exclude the generated
+`hosts/*/hardware-configuration.nix`, because `nixos-generate-config` owns
+their layout.
 
 `install.sh` is a whiptail installer for a fresh machine. It detects the host
 from DMI, rewrites `username`, copies `/etc/nixos/hardware-configuration.nix`

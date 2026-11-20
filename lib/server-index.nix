@@ -109,7 +109,7 @@ in ''
   <p class="m">${toString (length services)} services have a page. Everything else is described below the tables &mdash; a link only appears here if the port actually answers.</p>
   ${tables}
   <hr>
-  <p class="m"><b>filen-sync</b> &mdash; a systemd timer, not a web service: it bisyncs the Filen drive root into <b>~/filen</b> every 30 minutes. Check it with <b>systemctl status filen-sync.timer</b>.</p>
+  <p class="m"><b>seafile-client</b> &mdash; a systemd daemon, not a web service: it keeps the Seafile library two-way synced into <b>~/seafile</b>. Check it with <b>systemctl status seafile-client</b>.</p>
   <p class="m">tailscaled runs as a system service (systemd, <b>tailscaled.service</b>), no web ui.</p>
   <hr>
   <p class="m">blocky is dns on <b>0.0.0.0:53</b> on grandpa and asus — bound on every interface so loopback and the tailnet both answer; the firewall, not the bind, is what keeps the LAN out. Never web-published.</p>

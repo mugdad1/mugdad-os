@@ -1,5 +1,6 @@
 # Seafile GUI client on laptops only (t480s + victus).
-# The ~/filen -> Seafile bridge runs on grandpa (modules/core/seafile-sync.nix).
+# The servers run a headless daemon instead (modules/core/seafile-client.nix);
+# both sync the same "filen" library, laptops to ~/seafile.
 {
   pkgs,
   ...

@@ -19,8 +19,10 @@
     ungoogled-chromium
     tor-browser
 
-    ## Cloud storage — upstream AppImage wrapper, see pkgs/filen-desktop.nix.
-    (callPackage ../../../pkgs/filen-desktop.nix {})
+    ## Cloud storage — the Seafile desktop client (laptops) and the
+    ## headless seafile-client daemon on the servers are declared in
+    ## modules/desktop/seafile.nix and modules/core/seafile-client.nix.
+    ## Filen was removed on 2026-11-20.
 
     ## Office / Productivity
     libreoffice-stable

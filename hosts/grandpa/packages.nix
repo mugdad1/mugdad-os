@@ -27,9 +27,6 @@
     gh
     git
 
-    # Filen is grandpa-only: the laptops carry no filen CLI.
-    (pkgs.callPackage ../../pkgs/filen-cli.nix {})
-
     # python3 with the AC/serial libraries used for dongle probing.
     (python3.withPackages (p: [p.pyserial p.aioesphomeapi]))
 

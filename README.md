@@ -43,7 +43,7 @@ modules/
     terminal/             # cli, dev, fish, foot, glow, lazyvim, shell
     apps/                 # browser, git, gui, homepage, vscodium, xdg
     desktop/              # theme, osd, swaylock + variables.nix, hyprland/, waybar/, rofi/, swaync/
-pkgs/                     # callPackage files: filen-cli.nix, filen-desktop.nix, gitea-mirror.nix
+pkgs/                     # callPackage files: gitea-mirror.nix
 scripts/                  # wrapped shell scripts (scripts/default.nix)
   grandpa/ac.sh           # read directly by hosts/grandpa/packages.nix
 assets/fonts/ assets/wallpapers/
@@ -83,8 +83,8 @@ sudo nixos-rebuild switch --flake ~/nixos-config#asus
 ## Secrets
 
 None are tracked. The repo is public and declares no credential and no secret
-tooling. `filen-sync` authenticates through the `filen` CLI's own login state in
-the user's home (`filen login` once per server); SearXNG uses a fixed
+tooling. `seafile-client` authenticates through the token the Seafile CLI keeps
+in `~/.seafile-cli` (`seaf-cli login` once per host); SearXNG uses a fixed
 cookie-signing key in `hosts/asus/searxng.nix`, which is not a credential.
 
 ## Development

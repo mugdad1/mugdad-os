@@ -4,7 +4,7 @@
 #
 # Dropped from the grandpa list because they are tied to that machine:
 #   ac          — the Midea AC dongle lives next to grandpa
-#   filen-cli   — grandpa's cloud account, no filen login on the laptops
+#   filen-cli   — removed with Filen on 2026-11-20 (cloud is Seafile now)
 #   python3 + pyserial/aioesphomeapi, picocom — the dongle probe stack
 {pkgs, ...}: {
   environment.systemPackages = with pkgs; [

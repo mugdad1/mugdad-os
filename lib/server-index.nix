@@ -36,7 +36,7 @@
       name = "seafile";
       host = "grandpa";
       port = "8090";
-      desc = "self-hosted file sync — web ui + desktop/mobile apps, the open filen";
+      desc = "self-hosted file sync — web ui + desktop/mobile apps (the open Filen alternative)";
     }
     {
       name = "invidious";

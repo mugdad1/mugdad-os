@@ -1,4 +1,4 @@
-# seafile-client — headless two-way sync of the "filen" library into
+# seafile-client — headless two-way sync of the "storage" library into
 # ~/seafile. Servers only (grandpa, asus): a desktop has no need for a second
 # daemon when the GUI client in modules/desktop/seafile.nix can do it.
 #

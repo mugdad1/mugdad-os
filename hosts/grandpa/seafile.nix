@@ -37,6 +37,21 @@
           - "${toString port}:80"
         volumes:
           - /var/lib/seafile/data:/shared
+        # seahub refuses to start if pids/seahub.pid names a dead process, and
+        # that file lives in the container's writable layer, which survives a
+        # `restart: unless-stopped`. An unclean shutdown therefore left the web
+        # UI answering 502 until the pid was removed by hand (2026-11-21).
+        # Runtime pids belong in tmpfs: a fresh container always starts clean.
+        tmpfs:
+          - /opt/seafile/pids
+        # Watch seahub, not nginx: nginx stays up when gunicorn is dead, which
+        # is how the 502 above stayed invisible.
+        healthcheck:
+          test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1:8000/ || exit 1"]
+          interval: 30s
+          timeout: 5s
+          retries: 3
+          start_period: 120s
         environment:
           DB_HOST: db
           DB_ROOT_PASSWD: ''${SEAFILE_DB_PASSWORD}

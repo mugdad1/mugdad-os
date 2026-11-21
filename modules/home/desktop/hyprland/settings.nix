@@ -11,7 +11,7 @@ in ''
       output   = "eDP-1",
       mode     = "preferred",
       position = "auto",
-      scale    = 1.2,
+      scale    = auto,
   })
 
   pcall(dofile, os.getenv("HOME") .. "/.config/hypr/monitors.lua")

@@ -95,7 +95,12 @@
           test: ["CMD-SHELL", "psql -U $$POSTGRES_USER -d $$POSTGRES_DB -v ON_ERROR_STOP=1 -tAc 'SELECT pg_is_in_recovery()' | grep -qx f"]
           interval: 10s
           timeout: 5s
-          retries: 5
+          retries: 10
+          # The entrypoint runs its init server without a TCP listener, and
+          # crash recovery has to finish before the flag flips. Without this
+          # grace period those expected failures mark the container unhealthy
+          # and `docker compose up -d` aborts the whole stack.
+          start_period: 60s
 
     volumes:
       postgresdata:

@@ -108,8 +108,8 @@ in {
         "geo.enabled" = false;
         "browser.send_pings" = false;
         "dom.battery.enabled" = false;
-        "media.autoplay.default" = 5;
-        "media.autoplay.blocking_policy" = 2;
+        "media.autoplay.default" = 0;
+        "media.autoplay.blocking_policy" = 0;
       };
 
       # SearXNG in the address bar; ddg stays as a fallback. force = true is

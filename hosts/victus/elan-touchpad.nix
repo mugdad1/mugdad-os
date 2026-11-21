@@ -11,6 +11,11 @@
 # an early feature-report write can succeed at the ioctl level but be ignored.
 # The switch is therefore retried and only reported successful after the
 # touchpad's evdev node actually advertises multitouch absolute axes.
+#
+# A udev rule re-runs the same idempotent script whenever this HID device is
+# (re)enumerated, so a fall back to mouse mode is repaired without a reboot or
+# a suspend cycle. The script exits immediately when the pad already advertises
+# PTP axes, which also stops the driver rebind from looping on its own add event.
 {
   config,
   lib,
@@ -28,7 +33,7 @@
     HID_GLOB = "/sys/bus/hid/devices/0018:04F3:321A.*"
     I2C_DEVICE = "/sys/bus/i2c/devices/i2c-ELAN0788:00"
     I2C_DRIVER = "/sys/bus/i2c/drivers/i2c_hid_acpi"
-    MARKER = "/run/elan-ptp-mode.done"
+    LOCK = "/run/elan-ptp-mode.lock"
     # Feature report 3: ELAN's vendor command to enable PTP/absolute mode.
     MAGIC = bytes([0x03, 0x33, 0x03, 0x06, 0x00, 0x05, 0x00, 0x03, 0x03, 0x00])
 
@@ -100,16 +105,27 @@
         with open(base + "/bind", "w") as handle:
             handle.write(name)
 
-    def mark_success():
-        with open(MARKER, "w") as handle:
-            handle.write("1\n")
+    def acquire_lock():
+        # The boot/service unit and the udev rule can run at the same time;
+        # whichever loses the race lets the winner do the switch.
+        handle = open(LOCK, "w")
+        try:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            handle.close()
+            return None
+        return handle
 
     def main():
-        # Fast path, also used on resume: trust only the advertised axes.
+        if acquire_lock() is None:
+            log("another ELAN switch is already running")
+            return 0
+
+        # Fast path, also used on resume and by the rebind's own add event:
+        # trust only the advertised axes, not a marker from an earlier boot.
         hid = hid_device()
         if hid and ptp_active(hid):
             log("already in PTP mode")
-            mark_success()
             return 0
 
         deadline = time.monotonic() + 180
@@ -123,7 +139,6 @@
 
             if ptp_active(hid):
                 log("already in PTP mode")
-                mark_success()
                 return 0
 
             attempt += 1
@@ -143,7 +158,6 @@
             for _ in range(40):
                 new_hid = hid_device()
                 if new_hid and ptp_active(new_hid):
-                    mark_success()
                     log("PTP mode confirmed after " + str(attempt) + " attempt(s)")
                     return 0
                 time.sleep(0.25)
@@ -165,6 +179,14 @@ in {
 
   config = lib.mkIf cfg.enable {
     boot.kernelModules = ["hid_multitouch" "i2c_hid_acpi"];
+
+    # Re-enumeration (suspend/resume, driver rebind, a late I2C probe) can put
+    # the controller back into mouse mode. Repair it at the device level, not
+    # only at boot. The script's PTP check makes the rebind's own add event a
+    # no-op, and the lock serialises this with the oneshot units below.
+    services.udev.extraRules = ''
+      ACTION=="add", SUBSYSTEM=="hid", ATTRS{id/vendor}=="04f3", ATTRS{id/product}=="321a", RUN+="${execStart}"
+    '';
 
     systemd.services.elan-ptp-mode = {
       description = "Enable PTP mode on the ELAN touchpad (two-finger scroll)";

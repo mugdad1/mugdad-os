@@ -9,15 +9,15 @@
 # to i2c_hid_acpi by itself, so the script forces that bind if no HID node shows
 # up. Then the controller is not always ready when its HID node first appears:
 # an early feature-report write can succeed at the ioctl level but be ignored.
-# The switch is therefore retried and only reported successful after the
-# touchpad's evdev node actually advertises multitouch absolute axes.
+# The switch is therefore retried and only reported successful once the driver
+# has come back with a fresh HID node.
 #
-# A udev rule re-runs the same script whenever this HID device is (re)enumerated,
-# so a fall back to mouse mode is repaired without a reboot or a suspend cycle.
-# The switch is forced every time: the controller keeps advertising ABS_MT axes
-# even while it is still sending mouse reports, so capability bits cannot be
-# used to detect the mode. A short timestamp guard and a lock absorb the add
-# event caused by the script's own driver rebind.
+# The controller keeps advertising ABS_MT capability bits even while it is
+# sending mouse reports, so capability bits cannot be used to detect the mode.
+# The switch is forced every time: on boot, on resume, on udev re-enumeration,
+# and by a watchdog that watches the mouse collection for relative reports and
+# repairs a silent flip back to mouse mode without a reboot. A short timestamp
+# guard and a lock stop the rebind's own add event from looping.
 {
   config,
   lib,
@@ -30,6 +30,9 @@
     import fcntl
     import glob
     import os
+    import select
+    import struct
+    import sys
     import time
 
     HID_GLOB = "/sys/bus/hid/devices/0018:04F3:321A.*"
@@ -98,8 +101,8 @@
             handle.write(name)
 
     def acquire_lock():
-        # The boot/service unit and the udev rule can run at the same time;
-        # whichever loses the race lets the winner do the switch.
+        # The boot/service unit, the udev rule and the watchdog can run at the
+        # same time; whichever loses the race lets the winner do the switch.
         handle = open(LOCK, "w")
         try:
             fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -109,10 +112,7 @@
         return handle
 
     def switched_recently():
-        # The advertised evdev axes are NOT a mode indicator: this controller
-        # keeps them in mouse mode while sending only report 1 (REL_X/REL_Y),
-        # so the switch must be forced rather than skipped. Only the add event
-        # caused by our own rebind is suppressed here.
+        # Only the add event caused by our own rebind is suppressed here.
         try:
             return time.time() - os.path.getmtime(STAMP) < GUARD_SECONDS
         except OSError:
@@ -122,7 +122,7 @@
         with open(STAMP, "w") as handle:
             handle.write("1\n")
 
-    def main():
+    def force_switch():
         if acquire_lock() is None:
             log("another ELAN switch is already running")
             return 0
@@ -166,7 +166,67 @@
         log("timed out waiting for ELAN PTP mode")
         return 1
 
-    raise SystemExit(main())
+    def mouse_event_node():
+        # In PTP mode the Mouse collection is silent. Relative reports here are
+        # the one reliable sign that the controller has flipped back to mouse
+        # mode; the ABS_MT capability bits are present in both modes.
+        pattern = HID_GLOB + "/input/input*/event*/device/capabilities/rel"
+        for caps in glob.glob(pattern):
+            try:
+                bits = int(open(caps).read().split()[0], 16)
+            except (OSError, ValueError, IndexError):
+                continue
+            if bits & 1:  # REL_X
+                return "/dev/input/" + os.path.basename(
+                    caps[: -len("/device/capabilities/rel")]
+                )
+        return None
+
+    def watch():
+        log("watchdog started")
+        quiet_until = time.monotonic() + 5
+        while True:
+            node = mouse_event_node()
+            if not node:
+                time.sleep(2)
+                continue
+            try:
+                stream = open(node, "rb", buffering=0)
+            except OSError:
+                time.sleep(2)
+                continue
+
+            count = 0
+            window = time.monotonic()
+            while True:
+                ready, _, _ = select.select([stream], [], [], 1.0)
+                now = time.monotonic()
+                if now - window >= 2.0:
+                    count = 0
+                    window = now
+                if not ready:
+                    continue
+                data = stream.read(24)
+                if len(data) != 24:
+                    break
+                _, _, etype, code, _ = struct.unpack("llHHi", data)
+                # A few stray REL events can arrive while the driver settles;
+                # require a burst before treating them as a real mode flip.
+                if etype == 2 and code in (0, 1):
+                    count += 1
+                    if count >= 8 and now > quiet_until and not switched_recently():
+                        log("mouse-mode reports detected; forcing PTP switch")
+                        stream.close()
+                        force_switch()
+                        quiet_until = time.monotonic() + 8
+                        break
+            stream.close()
+
+    if "--watch" in sys.argv:
+        watch()
+        raise SystemExit(0)
+
+    raise SystemExit(force_switch())
   '';
 
   execStart = "${pkgs.python3}/bin/python3 ${switchScript}";
@@ -211,6 +271,21 @@ in {
         Type = "oneshot";
         ExecStart = execStart;
         TimeoutStartSec = 240;
+      };
+    };
+
+    # A silent flip back to mouse mode produces no udev add event, so watch the
+    # mouse collection for relative reports and repair it when it happens.
+    systemd.services.elan-ptp-watch = {
+      description = "Watch ELAN touchpad for mouse-mode fallback";
+      wantedBy = ["multi-user.target"];
+      after = ["elan-ptp-mode.service"];
+
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${execStart} --watch";
+        Restart = "always";
+        RestartSec = 2;
       };
     };
   };

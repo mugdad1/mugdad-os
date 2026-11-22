@@ -206,7 +206,11 @@
                     window = now
                 if not ready:
                     continue
-                data = stream.read(24)
+                try:
+                    data = stream.read(24)
+                except OSError:
+                    # The node vanishes when the driver rebinds; re-discover it.
+                    break
                 if len(data) != 24:
                     break
                 _, _, etype, code, _ = struct.unpack("llHHi", data)

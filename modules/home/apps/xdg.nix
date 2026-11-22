@@ -76,9 +76,20 @@
         lib.genAttrs types (_: defaultApps.${key})
     )
     mimeMap;
+
+  # Chromium is the default browser; Zen stays installed but no longer claims
+  # the web handlers (its module's setAsDefaultBrowser is off in browser.nix).
+  webAssociations = {
+    "text/html" = ["chromium-browser.desktop"];
+    "application/xhtml+xml" = ["chromium-browser.desktop"];
+    "x-scheme-handler/http" = ["chromium-browser.desktop"];
+    "x-scheme-handler/https" = ["chromium-browser.desktop"];
+    "x-scheme-handler/about" = ["chromium-browser.desktop"];
+    "x-scheme-handler/unknown" = ["chromium-browser.desktop"];
+  };
 in {
   xdg.mimeApps.enable = true;
-  xdg.mimeApps.defaultApplications = associations;
+  xdg.mimeApps.defaultApplications = associations // webAssociations;
 
   home.packages = with pkgs; [waypaper];
 

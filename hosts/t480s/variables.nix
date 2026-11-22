@@ -6,7 +6,7 @@
   gitUser = "mugdad1";
   gitEmail = "mugdad02@tutamail.com";
 
-  browser = "zen-beta";
+  browser = "chromium";
   terminal = "foot";
   launcher = "rofi";
 

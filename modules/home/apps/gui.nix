@@ -16,7 +16,7 @@
     freetube
     cool-retro-term
     ## Browsers (un-nixified profiles)
-    ungoogled-chromium
+    chromium
     tor-browser
 
     ## Cloud storage — the headless seafile-client daemon and CLI are

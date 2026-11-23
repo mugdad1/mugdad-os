@@ -76,8 +76,7 @@ in {
   };
 
   # swaync is the Hyprland notification daemon; Cinnamon ships its own
-  # notification server, so start it only where it is used — the same gate
-  # pattern as hypridle.nix.
+  # notification server, so start it only where it is used.
   systemd.user.services.swaync.Unit.ConditionEnvironment = lib.mkForce [
     "WAYLAND_DISPLAY"
     "XDG_CURRENT_DESKTOP=Hyprland"

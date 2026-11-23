@@ -3,6 +3,7 @@
     ./battery-charge-limit.nix
     ./elan-touchpad.nix
     ./hardware-configuration.nix
+    ./wine.nix
     ../../modules/core
     ../../modules/desktop
   ];
@@ -55,6 +56,9 @@
   # The ELAN pad boots in mouse mode; this switches it to PTP mode so
   # two-finger scrolling works in Hyprland/Cinnamon.
   services.victus.elanTouchpadPtp.enable = true;
+
+  # CapCut is Windows-only; install the full Wine/Bottles stack on this host.
+  services.victus.wine.enable = true;
 
   environment.systemPackages = [
     pkgs.nvtopPackages.full

@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  variables,
   ...
 }: let
   c = (import ../../../lib/gruvbox.nix).css;
@@ -77,19 +78,30 @@
     )
     mimeMap;
 
-  # Chromium is the default browser; Zen stays installed but no longer claims
-  # the web handlers (its module's setAsDefaultBrowser is off in browser.nix).
+  # The default browser comes from `variables.browser` (t480s and victus both
+  # set chromium). Zen stays installed but no longer claims the web handlers
+  # (its module's setAsDefaultBrowser is off in browser.nix). Only Chromium's
+  # launcher is named differently from its package.
+  browserDesktop =
+    if variables.browser == "chromium"
+    then "chromium-browser.desktop"
+    else "${variables.browser}.desktop";
+
   webAssociations = {
-    "text/html" = ["chromium-browser.desktop"];
-    "application/xhtml+xml" = ["chromium-browser.desktop"];
-    "x-scheme-handler/http" = ["chromium-browser.desktop"];
-    "x-scheme-handler/https" = ["chromium-browser.desktop"];
-    "x-scheme-handler/about" = ["chromium-browser.desktop"];
-    "x-scheme-handler/unknown" = ["chromium-browser.desktop"];
+    "text/html" = [browserDesktop];
+    "application/xhtml+xml" = [browserDesktop];
+    "x-scheme-handler/http" = [browserDesktop];
+    "x-scheme-handler/https" = [browserDesktop];
+    "x-scheme-handler/about" = [browserDesktop];
+    "x-scheme-handler/unknown" = [browserDesktop];
   };
 in {
   xdg.mimeApps.enable = true;
   xdg.mimeApps.defaultApplications = associations // webAssociations;
+
+  # Every host that imports the desktop home stack (t480s, victus) also exports
+  # its browser as $BROWSER for CLI tools that ignore mimeapps.list.
+  home.sessionVariables.BROWSER = variables.browser;
 
   home.packages = with pkgs; [waypaper];
 

@@ -16,7 +16,22 @@
     freetube
     cool-retro-term
     ## Browsers (un-nixified profiles)
-    chromium
+    # Chromium wrapped instead of overridden: `commandLineArgs` would rebuild
+    # the whole browser, while this only adds a wrapper. The basic password
+    # store keeps Chromium out of gnome-keyring entirely, so it never asks to
+    # unlock a keyring (saved passwords are then encrypted with a fixed key).
+    (pkgs.symlinkJoin {
+      name = "chromium-basic-store";
+      paths = [pkgs.chromium];
+      nativeBuildInputs = [pkgs.makeWrapper];
+      postBuild = ''
+        for bin in chromium chromium-browser; do
+          if [ -e "$out/bin/$bin" ]; then
+            wrapProgram "$out/bin/$bin" --add-flags "--password-store=basic"
+          fi
+        done
+      '';
+    })
     tor-browser
 
     ## Cloud storage — the headless seafile-client daemon and CLI are

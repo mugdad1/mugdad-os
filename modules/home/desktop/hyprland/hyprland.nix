@@ -22,7 +22,7 @@ in {
   xdg.configFile."hypr/hyprland.lua".text = ''
     -- mugdad's Hyprland configuration
     -- generated from modules/home/desktop/hyprland/hyprland.nix
-    -- https://github.com/mugdad1/nixos-config
+    -- https://github.com/mugdad1/mugdad-os
 
     -------------------------
     ---- ENVIRONMENT VARS ----

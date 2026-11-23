@@ -32,6 +32,6 @@
     mkdir -p "$HOME/.config/nvim"
     cp -r ${./lazyvim-config}/. "$HOME/.config/nvim/"
     chmod -R u+w "$HOME/.config/nvim"
-    echo "LazyVim config synced from nixos-config repo"
+    echo "LazyVim config synced from mugdad-os repo"
   '';
 }

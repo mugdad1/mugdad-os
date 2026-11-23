@@ -103,7 +103,7 @@ in ''
    hr{border:0;border-top:1px solid #${c.bg2};margin:26px 0}
   </style>
   <h1>mugdad &mdash; Server</h1>
-  <p class="m">generated from <b>~/nixos-config/lib/server-index.nix</b> &mdash; do not edit by hand; nginx on grandpa serves this page (a rebuild is the publish).</p>
+  <p class="m">generated from <b>~/mugdad-os/lib/server-index.nix</b> &mdash; do not edit by hand; nginx on grandpa serves this page (a rebuild is the publish).</p>
   <p class="m">${toString (length services)} services have a page. Everything else is described below the tables &mdash; a link only appears here if the port actually answers.</p>
   ${tables}
   <hr>

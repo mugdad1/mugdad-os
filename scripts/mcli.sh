@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-FLAKE_DIR="$HOME/nixos-config"
+FLAKE_DIR="$HOME/mugdad-os"
 HOSTNAME=$(hostname)
 VERSION="1.0.0"
 

@@ -23,7 +23,7 @@
     QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
     QT_QPA_PLATFORM = "wayland";
 
-    NH_FLAKE = "${config.home.homeDirectory}/nixos-config";
+    NH_FLAKE = "${config.home.homeDirectory}/mugdad-os";
 
     WINEDLLOVERRIDES = "winemenubuilder.exe=d";
   };

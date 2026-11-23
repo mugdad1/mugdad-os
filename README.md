@@ -1,9 +1,9 @@
-# nixos-config
+# mugdad-os
 
 Personal NixOS flake for three machines. **Not for public use.** Originally
 forked from [Frost-Phoenix/nixos-config](https://github.com/Frost-Phoenix/nixos-config).
 
-Long-form documentation lives in the wiki: `~/projects/wiki/projects/nixos-config.md`
+Long-form documentation lives in the wiki: `~/projects/wiki/projects/mugdad-os.md`
 (history and decisions: `~/projects/wiki/decisions.md`).
 
 ## Hosts
@@ -71,13 +71,13 @@ than trusting the build result.
 ## Rebuild
 
 ```bash
-mcli rebuild                 # nh os switch ~/nixos-config; host from hostname
+mcli rebuild                 # nh os switch ~/mugdad-os; host from hostname
 mcli update                  # flake update + rebuild
 
-sudo nixos-rebuild switch --flake ~/nixos-config#victus
-sudo nixos-rebuild switch --flake ~/nixos-config#t480s
-sudo nixos-rebuild switch --flake ~/nixos-config#grandpa
-sudo nixos-rebuild switch --flake ~/nixos-config#asus
+sudo nixos-rebuild switch --flake ~/mugdad-os#victus
+sudo nixos-rebuild switch --flake ~/mugdad-os#t480s
+sudo nixos-rebuild switch --flake ~/mugdad-os#grandpa
+sudo nixos-rebuild switch --flake ~/mugdad-os#asus
 ```
 
 ## Secrets

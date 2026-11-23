@@ -180,7 +180,7 @@ else
 fi
 
 # ── repos (two hosts share them: pull before push, always) ──────────────────
-for R in "$HOME/projects/wiki" "$HOME/nixos-config"; do
+for R in "$HOME/projects/wiki" "$HOME/mugdad-os"; do
     [ -d "$R/.git" ] || continue
     S=$(git -C "$R" status -sb 2> /dev/null | head -1)
     case "$S" in

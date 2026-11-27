@@ -24,6 +24,15 @@
   environment.systemPackages = with pkgs; [
     # Every host gets opencode from here; grandpa imports no home-manager stack.
     opencode
+
+    # `ac` — one command for the AC, straight to the ESP8266's web server.
+    # No Home Assistant in the path. It lives in core so every host has it
+    # (headless servers included), independent of the home-manager tree.
+    (writeShellApplication {
+      name = "ac";
+      runtimeInputs = [curl python3];
+      text = builtins.readFile ../../scripts/ac.sh;
+    })
     cachix
     nftables # `sudo nft list ruleset` — the firewall is nftables
 

@@ -3,16 +3,10 @@
   imports = [../common/server-packages.nix];
 
   environment.systemPackages = with pkgs; [
-    # `ac` — one command for the AC. writeShellApplication pins its runtime
-    # deps and runs shellcheck at build time. The Midea dongle lives next to
-    # this box.
-    (writeShellApplication {
-      name = "ac";
-      runtimeInputs = [curl python3];
-      text = builtins.readFile ../../scripts/grandpa/ac.sh;
-    })
+    # `ac` lives in ../common/server-packages.nix now — both servers can reach
+    # the ESP8266 over the LAN, so it is no longer grandpa-only.
 
-    # python3 with the AC/serial libraries used for dongle probing.
+    # python3 with the serial libraries used for dongle probing.
     (python3.withPackages (p: [p.pyserial p.aioesphomeapi]))
     picocom
 

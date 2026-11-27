@@ -55,6 +55,7 @@
   services.logind.settings.Login = {
     HandleLidSwitch = "suspend";
     HandleLidSwitchExternalPower = "suspend";
+    HandleLidSwitchDocked = "suspend";
   };
 
   environment.etc."libinput/local-overrides.quirks".text = ''

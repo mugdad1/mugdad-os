@@ -10,9 +10,9 @@ in ''
   ---- AUTOSTART ----
   -------------------
 
-  -- Same startup list as the sway config. swaync is a home-manager systemd
-  -- user unit; nixos-fake-graphical-session.target starts it, so it is
-  -- deliberately not exec'd here.
+  -- Same startup list as the sway config. swaync and hypridle are
+  -- home-manager systemd user units; nixos-fake-graphical-session.target
+  -- starts them, so they are deliberately not exec'd here.
   hl.on("hyprland.start", function()
       hl.exec_cmd("dbus-update-activation-environment --all --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
       hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")

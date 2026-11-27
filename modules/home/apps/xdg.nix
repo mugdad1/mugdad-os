@@ -2,7 +2,6 @@
   lib,
   pkgs,
   config,
-  variables,
   ...
 }: let
   c = (import ../../../lib/gruvbox.nix).css;
@@ -78,14 +77,10 @@
     )
     mimeMap;
 
-  # The default browser comes from `variables.browser` (t480s and victus both
-  # set chromium). Zen stays installed but no longer claims the web handlers
-  # (its module's setAsDefaultBrowser is off in browser.nix). Only Chromium's
-  # launcher is named differently from its package.
-  browserDesktop =
-    if variables.browser == "chromium"
-    then "chromium-browser.desktop"
-    else "${variables.browser}.desktop";
+  # Zen owns the web handlers on every desktop host; Chromium stays installed
+  # as a secondary browser only. browser.nix keeps setAsDefaultBrowser off so
+  # this file is the single source of truth for MIME associations.
+  browserDesktop = "zen-beta.desktop";
 
   webAssociations = {
     "text/html" = [browserDesktop];
@@ -99,9 +94,8 @@ in {
   xdg.mimeApps.enable = true;
   xdg.mimeApps.defaultApplications = associations // webAssociations;
 
-  # Every host that imports the desktop home stack (t480s, victus) also exports
-  # its browser as $BROWSER for CLI tools that ignore mimeapps.list.
-  home.sessionVariables.BROWSER = variables.browser;
+  # CLI tools that ignore mimeapps.list get the same Zen launcher.
+  home.sessionVariables.BROWSER = "zen-beta";
 
   home.packages = with pkgs; [waypaper];
 

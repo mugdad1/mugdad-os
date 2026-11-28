@@ -45,12 +45,11 @@
   services.power-profiles-daemon.enable = true;
 
   # HP's own ACPI charge-mode methods, not TLP thresholds.
-  # Disabled 2026-11-27: no pack is detected (`ACPI: battery: Slot [BAT0]
-  # (battery absent)`, no /sys/class/power_supply/BAT0), so the daemon only
-  # logged `BAT0/capacity is missing` every 60 s. Re-enable when a battery is
-  # fitted — the ACPI SBCO/GBCO path itself is still sound.
+  # Re-enabled 2026-11-28 after the pack was reconnected; disabled 2026-11-27
+  # only because ACPI reported `BAT0` absent and the daemon logged
+  # `BAT0/capacity is missing` every 60 s.
   services.victus.batteryChargeLimit = {
-    enable = false;
+    enable = true;
     stopAt = 85;
     resumeAt = 82;
   };

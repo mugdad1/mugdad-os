@@ -39,8 +39,18 @@
       enablePrimaryPaste = true;
     };
 
+    # SearXNG on asus — the same instance Zen uses (lib/server-index.nix).
+    # Ladybird has no built-in entry for it, so it goes in as a custom engine;
+    # the autocompleter speaks OpenSearch, which is Ladybird's default format.
     searchEngine = {
-      engine = "DuckDuckGo";
+      custom = [
+        {
+          name = "SearXNG";
+          url = "http://100.92.54.61:8888/search?q=%s";
+          suggestionsUrl = "http://100.92.54.61:8888/autocompleter?q=%s";
+        }
+      ];
+      engine = "SearXNG";
       suggestions = true;
     };
 

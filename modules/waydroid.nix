@@ -9,7 +9,11 @@
 # the Cinnamon X11 session cannot host it. Android images are not packaged:
 # they live in /etc/waydroid-extra/images and need `sudo waydroid init -f -i
 # /etc/waydroid-extra/images` once per host.
-{pkgs, lib, ...}: {
+#
+# Deliberately no kernel config changes: DMA-BUF heaps would help the
+# WayDroid-ATV video path, but any kernel change forces a full Linux compile
+# on every host. He chose the stock kernel ("Drop it — no kernel build").
+{pkgs, ...}: {
   virtualisation.waydroid = {
     enable = true;
 
@@ -21,18 +25,4 @@
     # explicitly instead of flipping the host firewall backend (waydroid#2094).
     package = pkgs.waydroid-nftables;
   };
-
-  # The WayDroid-ATV images decode through c2.ffmpeg (VA-API on x86) and their
-  # video FAQ says playback is unreliable without DMA-BUF heaps; the stock
-  # kernel leaves CONFIG_DMABUF_HEAPS unset.
-  boot.kernelPatches = [
-    {
-      name = "dmabuf-heaps";
-      patch = null;
-      structuredExtraConfig = with lib.kernel; {
-        DMABUF_HEAPS = yes;
-        DMABUF_HEAPS_SYSTEM = yes;
-      };
-    }
-  ];
 }

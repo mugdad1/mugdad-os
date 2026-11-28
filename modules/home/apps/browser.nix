@@ -1,12 +1,11 @@
-{inputs, pkgs, ...}: let
+{inputs, ...}: let
   g = import ../../../lib/gruvbox.nix;
   c = g.raw;
 in {
   imports = [inputs.zen-browser.homeModules.beta];
 
-  # Ladybird — the independent browser engine, alongside Zen. It is still
-  # early-development; the binary is `Ladybird` (capital L).
-  home.packages = [pkgs.ladybird];
+  # Ladybird has its own module (apps/ladybird.nix) — install plus the
+  # Nix-owned settings merge. Zen stays the default browser.
 
   programs.zen-browser = {
     enable = true;

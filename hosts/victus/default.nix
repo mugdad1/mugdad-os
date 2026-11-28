@@ -2,7 +2,7 @@
   imports = [
     ./battery-charge-limit.nix
     ./hardware-configuration.nix
-    ../../modules/waydroid
+    ../../modules/waydroid.nix
     ../../modules/core
     ../../modules/desktop
   ];

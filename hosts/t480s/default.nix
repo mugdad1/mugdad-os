@@ -7,6 +7,7 @@
   imports = [
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
     ./hardware-configuration.nix
+    ../../modules/waydroid
     ../../modules/core
     ../../modules/desktop
   ];

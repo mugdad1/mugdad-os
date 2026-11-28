@@ -1,6 +1,6 @@
-# Alacritty is the X11 terminal. foot is Wayland-only, so the Cinnamon X11
-# session had no terminal at all (xterm is excluded and cinnamon.apps is off).
-# scripts/terminal.sh picks foot on Hyprland and alacritty everywhere else.
+# Alacritty is the only terminal, on both Hyprland and Cinnamon X11. foot was
+# removed 2026-11-28 (Wayland-only, and the session wrapper that picked between
+# them went with it).
 _: let
   c = (import ../../../lib/gruvbox.nix).raw;
 in {

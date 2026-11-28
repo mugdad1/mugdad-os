@@ -153,7 +153,7 @@ in {
         desktopManager.cinnamon.enable = true;
 
         # xterm is added unconditionally by the X server module; nothing here
-        # launches it (foot is the terminal), so keep it out of the menu.
+        # launches it (alacritty is the terminal), so keep it out of the menu.
         excludePackages = [pkgs.xterm];
       };
     };

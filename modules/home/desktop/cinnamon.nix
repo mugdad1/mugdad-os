@@ -28,7 +28,7 @@
     {
       id = "custom0";
       name = "Terminal";
-      command = "terminal";
+      command = "alacritty";
       binding = "<Super>Return";
     }
     {

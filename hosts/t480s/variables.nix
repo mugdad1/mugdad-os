@@ -7,9 +7,9 @@
   gitEmail = "mugdad02@tutamail.com";
 
   browser = "zen-beta";
-  # Session-aware wrapper (scripts/terminal.sh): foot on Hyprland, alacritty
-  # on Cinnamon X11.
-  terminal = "terminal";
+  # Alacritty is the only terminal (foot removed 2026-11-28); it runs in both
+  # Hyprland and Cinnamon X11.
+  terminal = "alacritty";
   launcher = "rofi";
 
   keyboardLayout = "us,ara";

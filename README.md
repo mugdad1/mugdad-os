@@ -40,7 +40,7 @@ modules/
   core/                   # shared system layer — every host (16 files)
   desktop/                # desktop environment — laptops only (9 files)
   home/                   # home-manager stack — only where variables declare a desktop
-    terminal/             # cli, dev, fish, foot, glow, lazyvim, shell
+    terminal/             # alacritty, cli, dev, fish, glow, lazyvim, shell
     apps/                 # browser, git, gui, homepage, vscodium, xdg
     desktop/              # theme, osd, swaylock + variables.nix, hyprland/, waybar/, rofi/, swaync/
 pkgs/                     # callPackage files: gitea-mirror.nix

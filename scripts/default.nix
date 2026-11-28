@@ -9,7 +9,6 @@ in {
     (script "random-wallpaper")
     (script "runbg")
     (script "screenshot")
-    (script "terminal")
     (script "toggle-mic")
     (script "toggle-nightlight")
     (script "toggle-rofi")

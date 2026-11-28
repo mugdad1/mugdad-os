@@ -53,6 +53,13 @@ cmd_update() {
     # nixos-hardware and rust-overlay are gone from the flake entirely.
     nix flake update \
         nixpkgs home-manager nix-flatpak nix-index-database
+    # Ladybird is the upstream AppImage, pinned in the repo rather than in a
+    # flake input, so it needs its own refresh; the rebuild below picks it up.
+    if [[ -x "${FLAKE_DIR}/scripts/update-ladybird.sh" ]]; then
+        info "Refreshing the Ladybird AppImage pin..."
+        "${FLAKE_DIR}/scripts/update-ladybird.sh" ||
+            warn "Ladybird pin refresh failed (see above)"
+    fi
     popd > /dev/null
     info "Rebuilding with updated inputs..."
     cmd_rebuild

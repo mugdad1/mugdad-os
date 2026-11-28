@@ -120,7 +120,10 @@
 in {
   # Ladybird is the browser — Zen was removed on 2026-11-28 ("rm zen browser
   # lady is the one"). It is also the default web handler (apps/xdg.nix).
-  home.packages = [pkgs.ladybird];
+  # Upstream's official AppImage, not pkgs.ladybird: nixpkgs' source snapshot
+  # lags upstream releases by weeks and the bump needs an unreleased PR plus a
+  # long C++ build. See pkgs/ladybird-bin.nix; `mcli update` refreshes the pin.
+  home.packages = [(pkgs.callPackage ../../../pkgs/ladybird-bin.nix {})];
 
   home.activation.ladybirdProfile = lib.hm.dag.entryAfter ["writeBoundary"] ''
     P="$HOME/.config/Ladybird/Profiles/default"

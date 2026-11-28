@@ -60,7 +60,7 @@
       name = "searxng";
       host = "asus";
       port = "8888";
-      desc = "private metasearch, json api enabled — zen's search engine";
+      desc = "private metasearch, json api enabled — the browser's search engine";
     }
   ];
 

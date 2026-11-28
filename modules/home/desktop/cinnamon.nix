@@ -34,7 +34,7 @@
     {
       id = "custom1";
       name = "Browser";
-      command = "zen-beta";
+      command = "Ladybird";
       binding = "<Super>b";
     }
     {

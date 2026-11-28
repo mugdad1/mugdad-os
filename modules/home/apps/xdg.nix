@@ -81,10 +81,10 @@
     )
     mimeMap;
 
-  # Zen owns the web handlers on every desktop host; Chromium stays installed
-  # as a secondary browser only. browser.nix keeps setAsDefaultBrowser off so
-  # this file is the single source of truth for MIME associations.
-  browserDesktop = "zen-beta.desktop";
+  # Ladybird owns the web handlers on every desktop host; Chromium stays
+  # installed as a secondary browser only. This file is the single source of
+  # truth for MIME associations (2026-11-28: Zen removed, Ladybird is the one).
+  browserDesktop = "org.ladybird.Ladybird.desktop";
 
   webAssociations = {
     "text/html" = [browserDesktop];
@@ -98,8 +98,8 @@ in {
   xdg.mimeApps.enable = true;
   xdg.mimeApps.defaultApplications = associations // webAssociations;
 
-  # CLI tools that ignore mimeapps.list get the same Zen launcher.
-  home.sessionVariables.BROWSER = "zen-beta";
+  # CLI tools that ignore mimeapps.list get the same Ladybird launcher.
+  home.sessionVariables.BROWSER = "Ladybird";
 
   home.packages = with pkgs; [waypaper];
 

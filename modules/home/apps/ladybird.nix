@@ -14,7 +14,7 @@
   settings = {
     # Skip the first-run tour; we are not a new user.
     firstRunComplete = true;
-    # Same landing page as Zen (lib/server-index.nix, served by nginx on grandpa).
+    # The index page (lib/server-index.nix, served by nginx on grandpa).
     newTabPageURL = "http://100.106.116.60/";
     restorePreviousSession = false;
     languages = ["en-US" "en"];
@@ -39,7 +39,8 @@
       enablePrimaryPaste = true;
     };
 
-    # SearXNG on asus — the same instance Zen uses (lib/server-index.nix).
+    # SearXNG on asus — the same instance the old Zen profile used
+    # (lib/server-index.nix).
     # Ladybird has no built-in entry for it, so it goes in as a custom engine;
     # the autocompleter speaks OpenSearch, which is Ladybird's default format.
     searchEngine = {
@@ -57,7 +58,7 @@
     autoplay.policy = "block-audio";
     locationPolicy = "ask";
 
-    # Privacy choices that mirror the Zen profile in browser.nix.
+    # Privacy choices carried over from the old Zen profile.
     globalPrivacyControl = true;
     backgroundNetworking = {
       enabled = true;
@@ -117,7 +118,8 @@
 
   bookmarksFile = pkgs.writeText "ladybird-bookmarks.json" (builtins.toJSON bookmarks);
 in {
-  # The independent engine, alongside Zen (which stays the default browser).
+  # Ladybird is the browser — Zen was removed on 2026-11-28 ("rm zen browser
+  # lady is the one"). It is also the default web handler (apps/xdg.nix).
   home.packages = [pkgs.ladybird];
 
   home.activation.ladybirdProfile = lib.hm.dag.entryAfter ["writeBoundary"] ''

@@ -52,8 +52,7 @@ cmd_update() {
     pushd "${FLAKE_DIR}" > /dev/null
     # nixos-hardware and rust-overlay are gone from the flake entirely.
     nix flake update \
-        nixpkgs home-manager nix-flatpak nix-index-database \
-        zen-browser
+        nixpkgs home-manager nix-flatpak nix-index-database
     popd > /dev/null
     info "Rebuilding with updated inputs..."
     cmd_rebuild

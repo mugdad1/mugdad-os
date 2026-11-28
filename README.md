@@ -41,7 +41,7 @@ modules/
   desktop/                # desktop environment — laptops only (9 files)
   home/                   # home-manager stack — only where variables declare a desktop
     terminal/             # alacritty, cli, dev, fish, glow, lazyvim, shell
-    apps/                 # browser, git, gui, homepage, ladybird, vscodium, xdg
+    apps/                 # git, gui, homepage, ladybird, vscodium, xdg
     desktop/              # theme, osd, swaylock + variables.nix, hyprland/, waybar/, rofi/, swaync/
 pkgs/                     # callPackage files: gitea-mirror.nix
 scripts/                  # wrapped shell scripts (scripts/default.nix)

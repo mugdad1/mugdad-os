@@ -89,10 +89,14 @@ in {
     enable = true;
     overrides = {
       global = {
+        # Both sessions are supported: Hyprland is Wayland, but Cinnamon is
+        # offered on X11 (modules/desktop/sessions.nix) and Flatpak apps have
+        # no XWayland to fall back to there. Denying x11 made every Flatpak
+        # window fail to open in that session.
         Context.sockets = [
           "wayland"
-          "!x11"
-          "!fallback-x11"
+          "fallback-x11"
+          "x11"
         ];
       };
     };

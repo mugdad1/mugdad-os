@@ -61,6 +61,16 @@
     ## File manager
     nemo-with-extensions
     nemo-fileroller
+
+    ## Cinnamon session
+    # xed-editor is Cinnamon's GTK3 editor and the text/plain handler in
+    # xdg.nix. CopyQ is the X11 clipboard history (Hyprland uses cliphist),
+    # and maim/slop/xclip are the X11 half of scripts/screenshot.sh.
+    xed-editor
+    copyq
+    maim
+    slop
+    xclip
   ];
 
   dconf.settings = {

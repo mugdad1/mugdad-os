@@ -7,7 +7,9 @@
   gitEmail = "mugdad02@tutamail.com";
 
   browser = "zen-beta";
-  terminal = "foot";
+  # Session-aware wrapper (scripts/terminal.sh): foot on Hyprland, alacritty
+  # on Cinnamon X11.
+  terminal = "terminal";
   launcher = "rofi";
 
   keyboardLayout = "us,ara";

@@ -6,7 +6,7 @@
 }: let
   c = (import ../../../lib/gruvbox.nix).css;
   defaultApps = {
-    text = ["com.mitchellh.ghostty.desktop"];
+    text = ["org.x.editor.desktop"];
     image = ["imv-dir.desktop"];
     audio = ["vlc.desktop"];
     video = ["vlc.desktop"];
@@ -17,7 +17,11 @@
   };
 
   mimeMap = {
-    text = ["text/plain"];
+    text = [
+      "text/plain"
+      "text/markdown"
+      "text/x-markdown"
+    ];
     image = [
       "image/bmp"
       "image/gif"

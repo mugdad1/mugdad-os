@@ -14,7 +14,6 @@
     pavucontrol
     vlc
     freetube
-    cool-retro-term
     ## Browsers (un-nixified profiles)
     # Chromium wrapped instead of overridden: `commandLineArgs` would rebuild
     # the whole browser, while this only adds a wrapper. The basic password
